@@ -1,0 +1,112 @@
+{
+	texture: zelda1/sprites/link.png
+	texture_size: 128, 128
+	
+	size: 1, 1
+	line_length: 8
+	loop: True
+	frame_size: 16, 16
+	delay: 0.15
+	
+	//Animation name format for Link:
+	//[type]_[direction]_[shield_type]
+	//type: STILL, WALK, ATTACK
+	//direction: U, D, R
+	//shield_type: 0, 1, 2
+
+	[STILL_D_0] {
+		frames: 0
+		[STILL_D_1] {
+			position: 0, 16
+		}
+		[STILL_D_2] {
+			position: 0, 32
+		}
+	}
+	[STILL_U_0] {
+		frames: 2
+		[STILL_U_1] {
+			position: 0, 16
+		}
+		[STILL_U_2] {
+			position: 0, 32
+		}
+	}
+
+	[STILL_R_0] {
+		frames: 4
+		[STILL_R_1] {
+			position: 0, 16
+		}
+		[STILL_R_2] {
+			position: 0, 32
+		}
+	}
+
+	[WALK_D_0] {
+		frames: 0, 1
+		[WALK_D_1] {
+			position: 0, 16
+		}
+		[WALK_D_2] {
+			position: 0, 32
+		}
+	}
+	[WALK_U_0] {
+		frames: 2, 2
+		flip: -, H
+		[WALK_U_1] {
+			position: 0, 16
+		}
+		[WALK_U_2] {
+			position: 0, 32
+		}
+	}
+
+	[WALK_R_0] {
+		frames: 4, 3
+		[WALK_R_1] {
+			position: 0, 16
+		}
+		[WALK_R_2] {
+			position: 0, 32
+		}
+	}
+
+	[ATTACK_D_0] {
+		frames: 24
+		[ATTACK_D_1] {
+			position: 0, 16
+		}
+		[ATTACK_D_2] {
+			position: 0, 16
+		}
+	}
+	[ATTACK_U_0] {
+		frames: 25
+		[ATTACK_U_1] {
+			position: 0, 16
+		}
+		[ATTACK_U_2] {
+			position: 0, 16
+		}
+	}
+
+	[ATTACK_R_0] {
+		position: 0, 0
+		frames: 26
+		[ATTACK_R_1] {
+			position: 0, 16
+		}
+		[ATTACK_R_2] {
+			position: 0, 16
+		}
+	}
+	
+	[PICKUP_SMALL] {
+		frames: 40
+	}
+	[PICKUP_LARGE] {
+		frames: 41
+	}
+}
