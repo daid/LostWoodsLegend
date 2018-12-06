@@ -6,39 +6,39 @@
 	line_length: 8
 	loop: True
 	frame_size: 16, 16
-	delay: 0.15
+	delay: 0.1
 	
 	//Animation name format for Link:
 	//[type]_[direction]_[shield_type]
-	//type: STILL, WALK, ATTACK
+	//type: IDLE, WALK, ATTACK
 	//direction: U, D, R
 	//shield_type: 0, 1, 2
 
-	[STILL_D_0] {
+	[IDLE_D_0] {
 		frames: 0
-		[STILL_D_1] {
+		[IDLE_D_1] {
 			position: 0, 16
 		}
-		[STILL_D_2] {
+		[IDLE_D_2] {
 			position: 0, 32
 		}
 	}
-	[STILL_U_0] {
+	[IDLE_U_0] {
 		frames: 2
-		[STILL_U_1] {
+		[IDLE_U_1] {
 			position: 0, 16
 		}
-		[STILL_U_2] {
+		[IDLE_U_2] {
 			position: 0, 32
 		}
 	}
 
-	[STILL_R_0] {
+	[IDLE_R_0] {
 		frames: 4
-		[STILL_R_1] {
+		[IDLE_R_1] {
 			position: 0, 16
 		}
-		[STILL_R_2] {
+		[IDLE_R_2] {
 			position: 0, 32
 		}
 	}
