@@ -16,33 +16,7 @@ void PlayerPawn::onFixedUpdate()
     sp::Vector2d move_request = controls.getMoveRequest();
     
     setPosition(getPosition2D() + move_request * 5.0 / 60.0);
-    
-    if (move_request.x < 0)
-    {
-        if (move_request.y < 0 && direction == Direction::Down)
-            direction = Direction::Down;
-        else if (move_request.y > 0 && direction == Direction::Up)
-            direction = Direction::Up;
-        else
-            direction = Direction::Left;
-    }
-    else if (move_request.x > 0)
-    {
-        if (move_request.y < 0 && direction == Direction::Down)
-            direction = Direction::Down;
-        else if (move_request.y > 0 && direction == Direction::Up)
-            direction = Direction::Up;
-        else
-            direction = Direction::Right;
-    }
-    else if (move_request.y < 0)
-    {
-        direction = Direction::Down;
-    }
-    else if (move_request.y > 0)
-    {
-        direction = Direction::Up;
-    }
+    direction.update(move_request);
 
     sp::string animation_name = "IDLE";
     if (move_request.x || move_request.y)

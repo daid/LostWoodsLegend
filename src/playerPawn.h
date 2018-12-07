@@ -4,6 +4,7 @@
 #include <sp2/scene/node.h>
 
 #include "controls.h"
+#include "direction.h"
 
 class PlayerPawn : public sp::Node
 {
@@ -12,9 +13,7 @@ public:
 
     virtual void onFixedUpdate() override;
 private:
-    enum class Direction {
-        Up, Down, Left, Right
-    } direction;
+    Direction direction;
     Controls& controls;
 };
 
