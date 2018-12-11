@@ -9,22 +9,83 @@
 #include <sp2/graphics/scene/collisionrenderpass.h>
 #include <sp2/graphics/textureManager.h>
 #include <sp2/graphics/spriteAnimation.h>
-#include <sp2/collision/2d/circle.h>
+#include <sp2/graphics/meshdata.h>
+#include <sp2/graphics/opengl.h>
+#include <sp2/collision/simple2d/shape.h>
 #include <sp2/scene/scene.h>
 #include <sp2/scene/node.h>
 #include <sp2/scene/camera.h>
 #include <sp2/scene/tilemap.h>
-#include <sp2/io/keybinding.h>
+#include <sp2/updatable.h>
 
 #include <json11/json11.hpp>
 
 #include "playerPawn.h"
+#include "lightSource.h"
+#include "darknessOverlayRenderer.h"
+#include "mapScene.h"
+
 
 sp::P<sp::Window> window;
 
 Controls controls0{0};
+Controls controls1{1};
 sp::io::Keybinding escape_key{"exit", "Escape"};
 
+
+class GameManager : public sp::Updatable
+{
+public:
+    GameManager()
+    {
+        scene = new MapScene("MAIN");
+        player = new PlayerPawn(scene->getRoot(), controls0);
+        (new LightSource(player))->radius = 3.5;
+
+        map_position = sp::Vector2i(7, 7);
+        map_name = "zelda1/overworld";
+
+        scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+    }
+
+    virtual void onUpdate(float delta) override
+    {
+        if (player->getPosition2D().x < 0)
+        {
+            map_position.x -= 1;
+            scene->unloadMap();
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            player->setPosition(player->getPosition2D() + sp::Vector2d(16, 0));
+        }
+        if (player->getPosition2D().x > 16)
+        {
+            map_position.x += 1;
+            scene->unloadMap();
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            player->setPosition(player->getPosition2D() + sp::Vector2d(-16, 0));
+        }
+        if (player->getPosition2D().y < 0)
+        {
+            map_position.y += 1;
+            scene->unloadMap();
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            player->setPosition(player->getPosition2D() + sp::Vector2d(0, 10));
+        }
+        if (player->getPosition2D().y > 10)
+        {
+            map_position.y -= 1;
+            scene->unloadMap();
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            player->setPosition(player->getPosition2D() + sp::Vector2d(0, -10));
+        }
+    }
+private:
+    sp::P<MapScene> scene;
+    sp::P<PlayerPawn> player;
+    sp::P<DarknessRenderPass> darkness_render_pass;
+    sp::Vector2i map_position;
+    sp::string map_name;
+};
 
 int main(int argc, char** argv)
 {
@@ -48,36 +109,14 @@ int main(int argc, char** argv)
 
     sp::P<sp::SceneGraphicsLayer> scene_layer = new sp::SceneGraphicsLayer(1);
     scene_layer->addRenderPass(new sp::BasicNodeRenderPass());
+    scene_layer->addRenderPass(new DarknessRenderPass());
 #ifdef DEBUG
     scene_layer->addRenderPass(new sp::CollisionRenderPass());
 #endif
     window->addLayer(scene_layer);
 
-    //TODO: Create your own scene(s) here and populate them with nodes.
-    sp::P<sp::Scene> scene = new sp::Scene("MAIN", 0);
-    sp::P<sp::Node> node = new PlayerPawn(scene->getRoot(), controls0);
+    new GameManager();
 
-    sp::P<sp::Camera> camera = new sp::Camera(scene->getRoot());
-    camera->setOrtographic(8.0);
-    camera->setPosition(sp::Vector2d(8, 4));
-    scene->setDefaultCamera(camera);
-    
-    {
-        sp::P<sp::Tilemap> tilemap = new sp::Tilemap(scene->getRoot(), "zelda1/overworld/tilemap.png", 1.0, 11);
-
-        std::string err;
-        json11::Json json = json11::Json::parse(sp::io::ResourceProvider::get("zelda1/overworld/7-7.json")->readAll(), err);
-        int w = json["width"].int_value();
-        int h = json["height"].int_value();
-        for(int y=0; y<h; y++)
-        {
-            for(int x=0; x<w; x++)
-            {
-                tilemap->setTile(x, y, json["layers"][0]["data"][x + (h - 1 - y) * w].number_value() - 1);
-            }
-        }
-    }
-    
     engine->run();
 
     return 0;

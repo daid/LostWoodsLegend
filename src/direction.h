@@ -8,7 +8,7 @@ class Direction
 public:
     enum Value {
         Up, Down, Left, Right
-    } value;
+    } value = Down;
     
     operator Value() const
     {
@@ -19,7 +19,39 @@ public:
     {
         this->value = value;
     }
-    
+
+    sp::Vector2d toVector()
+    {
+        switch (value)
+        {
+        case Value::Up:
+            return sp::Vector2d(0, 1);
+        case Value::Down:
+            return sp::Vector2d(0, -1);
+        case Value::Left:
+            return sp::Vector2d(-1, 0);
+        case Value::Right:
+            return sp::Vector2d(1, 0);
+        }
+        return sp::Vector2d(0, 0);
+    }
+
+    double toAngle()
+    {
+        switch (value)
+        {
+        case Value::Up:
+            return 0;
+        case Value::Down:
+            return 180;
+        case Value::Left:
+            return 90;
+        case Value::Right:
+            return 270;
+        }
+        return 0;
+    }
+
     void update(sp::Vector2d movement)
     {
         if (movement.x < 0)
