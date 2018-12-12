@@ -1,0 +1,29 @@
+{
+	texture: zelda1/sprites/overworld_enemies.png
+	texture_size: 128, 128
+	
+	size: 1, 1
+	line_length: 8
+	loop: True
+	frame_size: 16, 16
+	delay: 0.1
+	
+	[DOWN] {
+		frames: 0, 1
+        [BLUE_DOWN] {
+            position: 0, 16
+        }
+	}
+	[RIGHT] {
+		frames: 2, 3
+        [BLUE_RIGHT] {
+            position: 0, 16
+        }
+	}
+	[UP] {
+		frames: 4, 5
+        [BLUE_UP] {
+            position: 0, 16
+        }
+	}
+}

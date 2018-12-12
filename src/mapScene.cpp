@@ -1,10 +1,114 @@
 #include "mapScene.h"
 #include "playerPawn.h"
+#include "enemy.h"
 
 #include <sp2/scene/node.h>
 #include <sp2/scene/camera.h>
 #include <sp2/scene/tilemap.h>
 #include <sp2/collision/simple2d/shape.h>
+
+#include <sp2/graphics/spriteAnimation.h>
+#include <sp2/collision/simple2d/shape.h>
+
+
+class Octo : public Enemy
+{
+public:
+    Octo(sp::P<sp::Node> parent)
+    : Enemy(parent)
+    {
+        setAnimation(sp::SpriteAnimation::load("zelda1/sprites/octo.txt"));
+        render_data.shader = sp::Shader::get("object.shader");
+        animationPlay("DOWN");
+
+        sp::collision::Simple2DShape shape(sp::Vector2d(0.8, 0.8));
+        setCollisionShape(shape);
+
+        hp = 10;
+        hit_damage = 5;
+        state = State::Walk;
+        hurt_counter = 0;
+    }
+
+    virtual void onFixedUpdate() override
+    {
+        switch(state)
+        {
+        case State::Walk:
+            break;
+        case State::Attack:
+            break;
+        }
+        if (hurt_counter > 0)
+        {
+            hurt_counter--;
+            switch(hurt_counter & 3)
+            {
+            case 0: render_data.color = sp::Color(1, 1, 1); break;
+            case 1: render_data.color = sp::Color(1, 1, 0); break;
+            case 2: render_data.color = sp::Color(1, 0, 1); break;
+            case 3: render_data.color = sp::Color(0, 1, 1); break;
+            }
+        }
+
+        switch(walk_direction)
+        {
+        case Direction::Left:
+            animationPlay("RIGHT");
+            animationSetFlags(sp::SpriteAnimation::FlipFlag);
+            break;
+        case Direction::Right:
+            animationPlay("RIGHT");
+            animationSetFlags(0);
+            break;
+        case Direction::Up:
+            animationPlay("UP");
+            animationSetFlags(0);
+            break;
+        case Direction::Down:
+            animationPlay("DOWN");
+            animationSetFlags(0);
+            break;
+        }
+    }
+
+    virtual bool onTakeDamage(int amount, sp::P<PlayerPawn> source) override
+    {
+        if (hurt_counter > 0)
+            return false;
+
+        LOG(Debug, "Damage:", amount);
+        //hp -= amount;
+        hurt_counter = 35;
+        if (hp <= 0)
+            delete this; //TODO: Spawn death animation object.
+        return true;
+    }
+
+    virtual void onCollision(sp::CollisionInfo& info) override
+    {
+        sp::P<PlayerPawn> player = info.other;
+        if (player)
+        {
+            //TODO: player->onTakeDamage(hit_damage, this);
+        }
+    }
+
+    enum class State
+    {
+        Walk,
+        Attack
+    };
+
+private:
+    int hp;
+    int hit_damage;
+    int hurt_counter;
+
+    State state;
+    Direction walk_direction;
+    int walk_distance;
+};
 
 
 MapScene::MapScene(sp::string scene_name)
@@ -108,6 +212,8 @@ void MapScene::loadMap(sp::string map_name)
             }
         }
     }
+
+    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
 }
 
 void MapScene::unloadMap()

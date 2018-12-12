@@ -1,4 +1,5 @@
 #include "playerPawn.h"
+#include "enemy.h"
 
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
@@ -6,27 +7,37 @@
 class UseSword : public sp::Node
 {
 public:
-    UseSword(sp::P<sp::Node> source, Direction direction)
+    UseSword(sp::P<PlayerPawn> source, Direction direction)
     : sp::Node(source->getParent())
     {
         setAnimation(sp::SpriteAnimation::load("zelda1/sprites/items.txt"));
         render_data.shader = sp::Shader::get("object.shader");
         animationPlay("SWORD_0");
-        setPosition(source->getPosition2D() + direction.toVector());
+        setPosition(source->getPosition2D() + sp::Vector2d(0, -0.1) + direction.toVector() * 0.8);
         setRotation(direction.toAngle());
 
-        sp::collision::Simple2DShape shape(sp::Vector2d(0.8, 0.5));
+        sp::collision::Simple2DShape shape(sp::Vector2d(0.6, 1.1));
+        if (direction == Direction::Left || direction == Direction::Right)
+            std::swap(shape.rect.size.x, shape.rect.size.y);
         shape.type = sp::collision::Shape::Type::Sensor;
         setCollisionShape(shape);
     }
 
-    virtual void onFixedUpdate()
+    virtual void onFixedUpdate() override
     {
         if (!timeout--)
             delete this;
     }
+
+    virtual void onCollision(sp::CollisionInfo& info) override
+    {
+        sp::P<Enemy> enemy = info.other;
+        if (enemy)
+            enemy->onTakeDamage(10, source);
+    }
 private:
-    int timeout = 15;
+    sp::P<PlayerPawn> source;
+    int timeout = 12;
 };
 
 
@@ -51,10 +62,13 @@ void PlayerPawn::onFixedUpdate()
     }
     else
     {
-        move_request = controls.getMoveRequest();
         if (controls.primary_action.getDown())
         {
             active_item = new UseSword(this, direction);
+        }
+        else
+        {
+            move_request = controls.getMoveRequest();
         }
     }
 
@@ -68,6 +82,8 @@ void PlayerPawn::onFixedUpdate()
         if (position != previous_position)
             animation_name = "WALK";
     }
+    if (active_item)
+        animation_name = "ATTACK";
 
     switch(direction)
     {
