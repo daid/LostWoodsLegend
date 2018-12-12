@@ -13,6 +13,10 @@ public:
     {
         Open,
         Solid,
+        SolidCorner_UL,
+        SolidCorner_UR,
+        SolidCorner_DL,
+        SolidCorner_DR,
         Water,
         Ladder,
         CliffEdge,

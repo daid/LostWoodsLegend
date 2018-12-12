@@ -28,13 +28,42 @@ void MapScene::loadMap(sp::string map_name)
             int idx = map_data->tiles[x + y * map_data->size.x];
             tilemap->setTile(x, y, idx);
 
-            if (map_data->tile_types[idx] == MapData::TileType::Solid)
+            switch(map_data->tile_types[idx])
             {
+            case MapData::TileType::Open:
+                break;
+            case MapData::TileType::Solid:{
                 sp::Node* n = new sp::Node(getRoot());
                 sp::collision::Simple2DShape shape(sp::Rect2d(0.5, 0.5, 1, 1));
                 shape.type = sp::collision::Shape::Type::Static;
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
+            }break;
+            case MapData::TileType::SolidCorner_UL:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.25, 0.5, 0.5));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+                n = new sp::Node(getRoot());
+                shape.rect = sp::Rect2d(0.5, 0., 0.5, 1);
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+            }break;
+            case MapData::TileType::SolidCorner_UR:{
+            }break;
+            case MapData::TileType::SolidCorner_DL:{
+            }break;
+            case MapData::TileType::SolidCorner_DR:{
+            }break;
+            case MapData::TileType::Water:{
+            }break;
+            case MapData::TileType::Ladder:{
+            }break;
+            case MapData::TileType::CliffEdge:{
+            }break;
+            case MapData::TileType::ShallowWater:{
+            }break;
             }
         }
     }

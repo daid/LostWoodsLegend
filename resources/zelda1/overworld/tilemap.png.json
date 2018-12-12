@@ -27,11 +27,11 @@
         }, 
         {
          "id":18,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":19,
-         "type":"SOLID"
+         "type":"CORNER_DL"
         }, 
         {
          "id":20,
@@ -39,7 +39,7 @@
         }, 
         {
          "id":21,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }, 
         {
          "id":22,
@@ -75,23 +75,23 @@
         }, 
         {
          "id":34,
-         "type":"SOLID"
+         "type":"CORNER_DR"
         }, 
         {
          "id":40,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }, 
         {
          "id":41,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":43,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }, 
         {
          "id":44,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":56,
@@ -107,19 +107,19 @@
         }, 
         {
          "id":59,
-         "type":"SOLID"
+         "type":"CORNER_DR"
         }, 
         {
          "id":60,
-         "type":"SOLID"
+         "type":"CORNER_DL"
         }, 
         {
          "id":61,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":62,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }, 
         {
          "id":63,
@@ -179,11 +179,11 @@
         }, 
         {
          "id":81,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }, 
         {
          "id":82,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":83,
@@ -195,7 +195,7 @@
         }, 
         {
          "id":85,
-         "type":"SOLID"
+         "type":"CORNER_DR"
         }, 
         {
          "id":86,
@@ -203,7 +203,7 @@
         }, 
         {
          "id":87,
-         "type":"SOLID"
+         "type":"CORNER_UR"
         }, 
         {
          "id":89,
@@ -211,11 +211,11 @@
         }, 
         {
          "id":90,
-         "type":"SOLID"
+         "type":"CORNER_DL"
         }, 
         {
          "id":91,
-         "type":"SOLID"
+         "type":"CORNER_UL"
         }],
  "tilewidth":16,
  "type":"tileset",
