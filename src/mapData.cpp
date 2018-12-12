@@ -40,6 +40,10 @@ MapData::MapData(sp::string name)
             tile_types[id] = TileType::SolidCorner_DL;
         else if (type == "CORNER_DR")
             tile_types[id] = TileType::SolidCorner_DR;
+        else if (type == "SIDE_L")
+            tile_types[id] = TileType::SolidSide_L;
+        else if (type == "SIDE_R")
+            tile_types[id] = TileType::SolidSide_R;
         else if (type == "LADDER")
             tile_types[id] = TileType::Ladder;
         else if (type == "CLIFFEDGE")

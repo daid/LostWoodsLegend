@@ -78,6 +78,22 @@
          "type":"CORNER_DR"
         }, 
         {
+         "id":35,
+         "type":"SIDE_L"
+        }, 
+        {
+         "id":36,
+         "type":"SIDE_R"
+        }, 
+        {
+         "id":38,
+         "type":"SIDE_L"
+        }, 
+        {
+         "id":39,
+         "type":"SIDE_R"
+        }, 
+        {
          "id":40,
          "type":"CORNER_UL"
         }, 

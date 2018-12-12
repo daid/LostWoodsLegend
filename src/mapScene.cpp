@@ -46,15 +46,56 @@ void MapScene::loadMap(sp::string map_name)
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
                 n = new sp::Node(getRoot());
-                shape.rect = sp::Rect2d(0.5, 0., 0.5, 1);
+                shape.rect = sp::Rect2d(0.75, 0.5, 0.5, 1);
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
             }break;
             case MapData::TileType::SolidCorner_UR:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.25, 0.5, 0.5));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+                n = new sp::Node(getRoot());
+                shape.rect = sp::Rect2d(0.25, 0.5, 0.5, 1);
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
             }break;
             case MapData::TileType::SolidCorner_DL:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.75, 0.5, 0.5));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+                n = new sp::Node(getRoot());
+                shape.rect = sp::Rect2d(0.75, 0.5, 0.5, 1);
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
             }break;
             case MapData::TileType::SolidCorner_DR:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.75, 0.5, 0.5));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+                n = new sp::Node(getRoot());
+                shape.rect = sp::Rect2d(0.25, 0.5, 0.5, 1);
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+            }break;
+            case MapData::TileType::SolidSide_L:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.5, 0.5, 1));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
+            }break;
+            case MapData::TileType::SolidSide_R:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.5, 0.5, 1));
+                shape.type = sp::collision::Shape::Type::Static;
+                n->setCollisionShape(shape);
+                n->setPosition(sp::Vector2d(x, y));
             }break;
             case MapData::TileType::Water:{
             }break;
