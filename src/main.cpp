@@ -39,13 +39,14 @@ public:
     GameManager()
     {
         scene = new MapScene("MAIN");
-        player = new PlayerPawn(scene->getRoot(), controls0);
-        (new LightSource(player))->radius = 3.5;
 
         map_position = sp::Vector2i(7, 7);
         map_name = "zelda1/overworld";
 
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+
+        player = new PlayerPawn(scene->getRoot(), controls0);
+        (new LightSource(player))->radius = 3.5;
     }
 
     virtual void onUpdate(float delta) override

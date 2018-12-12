@@ -22,11 +22,13 @@ public:
         animationPlay("DOWN");
 
         sp::collision::Simple2DShape shape(sp::Vector2d(0.8, 0.8));
+        shape.type = sp::collision::Shape::Type::Dynamic;
         setCollisionShape(shape);
 
         hp = 10;
         hit_damage = 5;
         state = State::Walk;
+        state_delay = sp::random(100, 200);
         hurt_counter = 0;
     }
 
@@ -35,6 +37,16 @@ public:
         switch(state)
         {
         case State::Walk:
+            setPosition(getPosition2D() + walk_direction.toVector() * 0.02);
+            if (state_delay > 0)
+            {
+                state_delay -= 1;
+            }
+            else
+            {
+                walk_direction = Direction::random();
+                state_delay = sp::random(100, 200);
+            }
             break;
         case State::Attack:
             break;
@@ -87,11 +99,12 @@ public:
 
     virtual void onCollision(sp::CollisionInfo& info) override
     {
+        if (info.other->isSolid() && state == State::Walk)
+            state_delay -= 10;
+    
         sp::P<PlayerPawn> player = info.other;
         if (player)
-        {
-            //TODO: player->onTakeDamage(hit_damage, this);
-        }
+            player->onTakeDamage(hit_damage, this);
     }
 
     enum class State
@@ -106,6 +119,7 @@ private:
     int hurt_counter;
 
     State state;
+    int state_delay;
     Direction walk_direction;
     int walk_distance;
 };

@@ -2,6 +2,8 @@
 #define DIRECTION_H
 
 #include <sp2/math/vector2.h>
+#include <sp2/random.h>
+
 
 class Direction
 {
@@ -80,6 +82,11 @@ public:
         {
             value = Up;
         }
+    }
+    
+    static Value random()
+    {
+        return (Value)sp::irandom(0, 3);
     }
 };
 

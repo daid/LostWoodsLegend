@@ -57,7 +57,7 @@ void PlayerPawn::onFixedUpdate()
     sp::Vector2d position = getPosition2D();
 
     sp::Vector2d move_request;
-    if (active_item)
+    if (active_item || hurt_delay > 0)
     {
     }
     else
@@ -72,7 +72,22 @@ void PlayerPawn::onFixedUpdate()
         }
     }
 
-    setPosition(getPosition2D() + move_request * 5.0 / 60.0);
+    if (hurt_delay > 0)
+    {
+        hurt_delay--;
+        switch(hurt_delay & 3)
+        {
+        case 0: render_data.color = sp::Color(1, 1, 1); break;
+        case 1: render_data.color = sp::Color(1, 1, 0); break;
+        case 2: render_data.color = sp::Color(1, 0, 1); break;
+        case 3: render_data.color = sp::Color(0, 1, 1); break;
+        }
+        setPosition(getPosition2D() + hurt_direction * 10.0 / 60.0);
+    }
+    else
+    {
+        setPosition(getPosition2D() + move_request * 5.0 / 60.0);
+    }
     direction.update(move_request);
 
 
@@ -105,4 +120,14 @@ void PlayerPawn::onFixedUpdate()
         break;
     }
     previous_position = position;
+}
+
+void PlayerPawn::onTakeDamage(int amount, sp::P<Enemy> source)
+{
+    if (hurt_delay > 0)
+        return;
+    
+    hurt_delay = 10;
+    hurt_direction = (getPosition2D() - source->getPosition2D()).normalized();
+    LOG(Debug, amount);
 }
