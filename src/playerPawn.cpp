@@ -77,16 +77,24 @@ void PlayerPawn::onFixedUpdate()
         }
     }
 
-    if (hurt_delay > 0)
+    if (hurt_delay > 0 || invincibility_time > 0)
     {
-        hurt_delay--;
-        switch(hurt_delay & 3)
+        if (hurt_delay > 0)
+            hurt_delay--;
+        else
+            invincibility_time--;
+        
+        switch((hurt_delay + invincibility_time) & 3)
         {
         case 0: render_data.color = sp::Color(1, 1, 1); break;
         case 1: render_data.color = sp::Color(1, 1, 0); break;
         case 2: render_data.color = sp::Color(1, 0, 1); break;
         case 3: render_data.color = sp::Color(0, 1, 1); break;
         }
+    }
+    
+    if (hurt_delay > 0)
+    {
         setPosition(getPosition2D() + hurt_direction * 10.0 / 60.0);
     }
     else
@@ -129,10 +137,10 @@ void PlayerPawn::onFixedUpdate()
 
 void PlayerPawn::onTakeDamage(int amount, sp::P<Enemy> source)
 {
-    if (hurt_delay > 0)
+    if (hurt_delay > 0 || invincibility_time > 0)
         return;
     
     hurt_delay = 10;
+    invincibility_time = 30;
     hurt_direction = (getPosition2D() - source->getPosition2D()).normalized();
-    LOG(Debug, amount);
 }

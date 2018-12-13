@@ -25,6 +25,7 @@ private:
     Controls& controls;
     
     int hurt_delay = 0;
+    int invincibility_time = 0;
     sp::Vector2d hurt_direction;
 };
 
