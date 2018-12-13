@@ -1,5 +1,6 @@
 #include "playerPawn.h"
 #include "enemy.h"
+#include "collisionBits.h"
 
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
@@ -47,7 +48,11 @@ PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
     setAnimation(sp::SpriteAnimation::load("zelda1/sprites/link.txt"));
     render_data.shader = sp::Shader::get("object.shader");
     setPosition(sp::Vector2d(8, 3.5));
-    setCollisionShape(sp::collision::Simple2DShape(sp::Rect2d(0, -0.20, 0.8, 0.6)));
+    sp::collision::Simple2DShape shape(sp::Rect2d(0, -0.20, 0.8, 0.6));
+    shape.setFilterCategory(CollisionCategory::player);
+    shape.setMaskFilterCategory(CollisionCategory::player);//No need to get collision with other players.
+    shape.setMaskFilterCategory(CollisionCategory::level_edge);//We ignore the level edge, this edge is to prevent enemies from leaving the level.
+    setCollisionShape(shape);
 
     shield_level = 1;
 }

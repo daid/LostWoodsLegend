@@ -54,30 +54,30 @@ public:
         if (player->getPosition2D().x < 0)
         {
             map_position.x -= 1;
-            scene->unloadMap();
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            scene->unloadMap(MapScene::Transition::Left);
             player->setPosition(player->getPosition2D() + sp::Vector2d(16, 0));
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
         if (player->getPosition2D().x > 16)
         {
             map_position.x += 1;
-            scene->unloadMap();
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            scene->unloadMap(MapScene::Transition::Right);
             player->setPosition(player->getPosition2D() + sp::Vector2d(-16, 0));
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
         if (player->getPosition2D().y < 0)
         {
             map_position.y += 1;
-            scene->unloadMap();
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            scene->unloadMap(MapScene::Transition::Down);
             player->setPosition(player->getPosition2D() + sp::Vector2d(0, 10));
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
         if (player->getPosition2D().y > 10)
         {
             map_position.y -= 1;
-            scene->unloadMap();
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            scene->unloadMap(MapScene::Transition::Up);
             player->setPosition(player->getPosition2D() + sp::Vector2d(0, -10));
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
     }
 private:

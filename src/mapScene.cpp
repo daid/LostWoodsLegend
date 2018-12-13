@@ -1,11 +1,13 @@
 #include "mapScene.h"
 #include "playerPawn.h"
 #include "enemy.h"
+#include "collisionBits.h"
 
 #include <sp2/scene/node.h>
 #include <sp2/scene/camera.h>
 #include <sp2/scene/tilemap.h>
 #include <sp2/collision/simple2d/shape.h>
+#include <sp2/tween.h>
 
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
@@ -29,6 +31,7 @@ public:
         hit_damage = 5;
         state = State::Walk;
         state_delay = sp::random(100, 200);
+        walk_direction = Direction::random();
         hurt_counter = 0;
     }
 
@@ -133,10 +136,28 @@ MapScene::MapScene(sp::string scene_name)
     setDefaultCamera(camera);
 }
 
+void MapScene::onFixedUpdate()
+{
+    if (transition != Transition::None)
+    {
+        getCamera()->setPosition(sp::Tween<sp::Vector2d>::easeOutCubic(transition_counter, 0, 30, camera_source_position, camera_target_position));
+        transition_counter++;
+        if (transition_counter == 30)
+        {
+            transition = Transition::None;
+            getCamera()->setPosition(camera_target_position);
+        }
+    }
+}
+
 void MapScene::loadMap(sp::string map_name)
 {
     map_data = std::unique_ptr<MapData>(new MapData(map_name));
-    getCamera()->setPosition(sp::Vector2d(map_data->size.x / 2, map_data->size.y / 2));
+    camera_target_position = sp::Vector2d(map_data->size.x / 2, map_data->size.y / 2);
+
+    sp::collision::Simple2DShape shape(sp::Rect2d(0, 0, 1, 1));
+    shape.type = sp::collision::Shape::Type::Static;
+    shape.setFilterCategory(CollisionCategory::walls);
 
     sp::P<sp::Tilemap> tilemap = new sp::Tilemap(getRoot(), map_data->tilemap_texture, 1.0, 1.0, map_data->tilemap_size.x, map_data->tilemap_size.y);
     for(int y=0; y<map_data->size.y; y++)
@@ -152,68 +173,61 @@ void MapScene::loadMap(sp::string map_name)
                 break;
             case MapData::TileType::Solid:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.5, 0.5, 1, 1));
-                shape.type = sp::collision::Shape::Type::Static;
-                n->setCollisionShape(shape);
+                shape.rect = sp::Rect2d(0.5, 0.5, 1, 1);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidCorner_UL:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.25, 0.5, 0.5));
-                shape.type = sp::collision::Shape::Type::Static;
+                shape.rect = sp::Rect2d(0.25, 0.25, 0.5, 0.5);
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
                 n = new sp::Node(getRoot());
                 shape.rect = sp::Rect2d(0.75, 0.5, 0.5, 1);
-                n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidCorner_UR:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.25, 0.5, 0.5));
-                shape.type = sp::collision::Shape::Type::Static;
+                shape.rect = sp::Rect2d(0.75, 0.25, 0.5, 0.5);
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
                 n = new sp::Node(getRoot());
                 shape.rect = sp::Rect2d(0.25, 0.5, 0.5, 1);
-                n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidCorner_DL:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.75, 0.5, 0.5));
-                shape.type = sp::collision::Shape::Type::Static;
+                shape.rect = sp::Rect2d(0.25, 0.75, 0.5, 0.5);
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
                 n = new sp::Node(getRoot());
                 shape.rect = sp::Rect2d(0.75, 0.5, 0.5, 1);
-                n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidCorner_DR:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.75, 0.5, 0.5));
-                shape.type = sp::collision::Shape::Type::Static;
+                shape.rect = sp::Rect2d(0.75, 0.75, 0.5, 0.5);
                 n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
                 n = new sp::Node(getRoot());
                 shape.rect = sp::Rect2d(0.25, 0.5, 0.5, 1);
-                n->setCollisionShape(shape);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidSide_L:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.25, 0.5, 0.5, 1));
-                shape.type = sp::collision::Shape::Type::Static;
-                n->setCollisionShape(shape);
+                shape.rect = sp::Rect2d(0.25, 0.5, 0.5, 1);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::SolidSide_R:{
                 sp::Node* n = new sp::Node(getRoot());
-                sp::collision::Simple2DShape shape(sp::Rect2d(0.75, 0.5, 0.5, 1));
-                shape.type = sp::collision::Shape::Type::Static;
-                n->setCollisionShape(shape);
+                shape.rect = sp::Rect2d(0.75, 0.5, 0.5, 1);
                 n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::Water:{
             }break;
@@ -227,18 +241,72 @@ void MapScene::loadMap(sp::string map_name)
         }
     }
 
+    {
+        sp::collision::Simple2DShape shape(sp::Rect2d(map_data->size.x / 2, 0, map_data->size.x, 1));
+        shape.type = sp::collision::Shape::Type::Static;
+        shape.setFilterCategory(CollisionCategory::level_edge);
+
+        sp::Node* n = new sp::Node(getRoot());
+        n->setPosition(sp::Vector2d(0, -0.5));
+        n->setCollisionShape(shape);
+
+        n = new sp::Node(getRoot());
+        n->setPosition(sp::Vector2d(0, map_data->size.y + 0.5));
+        n->setCollisionShape(shape);
+
+        shape.rect = sp::Rect2d(0, map_data->size.y / 2, 1, map_data->size.y);
+        n = new sp::Node(getRoot());
+        n->setPosition(sp::Vector2d(-0.5, 0));
+        n->setCollisionShape(shape);
+
+        n = new sp::Node(getRoot());
+        n->setPosition(sp::Vector2d(map_data->size.x + 0.5, 0));
+        n->setCollisionShape(shape);
+    }
+
     (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
+    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
+    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
+
+    if (transition == Transition::None)
+        getCamera()->setPosition(camera_target_position);
 }
 
-void MapScene::unloadMap()
+void MapScene::unloadMap(Transition transition)
 {
-    for(auto node : getRoot()->getChildren())
+    this->transition = transition;
+    transition_counter = 0;
+    switch(transition)
     {
-        sp::P<PlayerPawn> player = sp::P<sp::Node>(node);
-        sp::P<sp::Camera> camera = sp::P<sp::Node>(node);
-        if (!player && !camera)
+    case Transition::None: break;
+    case Transition::Up: camera_source_position = getCamera()->getPosition2D() + sp::Vector2d(0, -map_data->size.y); break;
+    case Transition::Down: camera_source_position = getCamera()->getPosition2D() + sp::Vector2d(0, map_data->size.y); break;
+    case Transition::Left: camera_source_position = getCamera()->getPosition2D() + sp::Vector2d(map_data->size.x, 0); break;
+    case Transition::Right: camera_source_position = getCamera()->getPosition2D() + sp::Vector2d(-map_data->size.x, 0); break;
+    }
+
+    for(auto _node : getRoot()->getChildren())
+    {
+        sp::P<sp::Node> node(_node);
+
+        sp::P<sp::Tilemap> tilemap = node;
+        if (tilemap && tilemap != previous_tilemap)
         {
-            delete node;
+            switch(transition)
+            {
+            case Transition::None: tilemap.destroy(); break;
+            case Transition::Up: tilemap->setPosition(sp::Vector2d(0, -map_data->size.y)); break;
+            case Transition::Down: tilemap->setPosition(sp::Vector2d(0, map_data->size.y)); break;
+            case Transition::Left: tilemap->setPosition(sp::Vector2d(map_data->size.x, 0)); break;
+            case Transition::Right: tilemap->setPosition(sp::Vector2d(-map_data->size.x, 0)); break;
+            }
+            previous_tilemap = tilemap;
+            continue;
         }
+
+        sp::P<PlayerPawn> player = node;
+        sp::P<sp::Camera> camera = node;
+        if (!player && !camera)
+            node.destroy();
     }
 }
