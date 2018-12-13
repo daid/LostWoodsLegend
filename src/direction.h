@@ -17,6 +17,28 @@ public:
         return value;
     }
     
+    void operator++()
+    {
+        switch(value)
+        {
+        case Up: value = Right; break;
+        case Down: value = Left; break;
+        case Left: value = Up; break;
+        case Right: value = Down; break;
+        }
+    }
+
+    void operator--()
+    {
+        switch(value)
+        {
+        case Up: value = Left; break;
+        case Down: value = Right; break;
+        case Left: value = Down; break;
+        case Right: value = Up; break;
+        }
+    }
+
     void operator=(const Value value)
     {
         this->value = value;
