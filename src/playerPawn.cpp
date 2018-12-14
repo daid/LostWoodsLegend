@@ -1,5 +1,5 @@
 #include "playerPawn.h"
-#include "enemy.h"
+#include "enemies/enemy.h"
 #include "collisionBits.h"
 
 #include <sp2/graphics/spriteAnimation.h>
