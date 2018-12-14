@@ -21,6 +21,7 @@ public:
         if (direction == Direction::Left || direction == Direction::Right)
             std::swap(shape.rect.size.x, shape.rect.size.y);
         shape.type = sp::collision::Shape::Type::Sensor;
+        shape.setFilterCategory(CollisionCategory::player_projectile);
         setCollisionShape(shape);
     }
 
@@ -52,6 +53,7 @@ PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
     shape.setFilterCategory(CollisionCategory::player);
     shape.setMaskFilterCategory(CollisionCategory::player);//No need to get collision with other players.
     shape.setMaskFilterCategory(CollisionCategory::level_edge);//We ignore the level edge, this edge is to prevent enemies from leaving the level.
+    shape.setMaskFilterCategory(CollisionCategory::player_projectile);//Ignore any projectile we fire.
     setCollisionShape(shape);
 
     shield_level = 1;
@@ -135,12 +137,13 @@ void PlayerPawn::onFixedUpdate()
     previous_position = position;
 }
 
-void PlayerPawn::onTakeDamage(int amount, sp::P<Enemy> source)
+bool PlayerPawn::onTakeDamage(int amount, sp::Vector2d source)
 {
     if (hurt_delay > 0 || invincibility_time > 0)
-        return;
-    
+        return false;
+
     hurt_delay = 10;
     invincibility_time = 30;
-    hurt_direction = (getPosition2D() - source->getPosition2D()).normalized();
+    hurt_direction = (getPosition2D() - source).normalized();
+    return true;
 }

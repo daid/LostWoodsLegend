@@ -7,6 +7,8 @@ namespace CollisionCategory
     static constexpr int other = 1;
     static constexpr int player = 2;
     static constexpr int enemy = 3;
+    static constexpr int player_projectile = 4;
+    static constexpr int enemy_projectile = 5;
 
     static constexpr int walls = 8;
     static constexpr int level_edge = 9;

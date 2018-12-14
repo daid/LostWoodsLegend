@@ -15,7 +15,7 @@ public:
 
     virtual void onFixedUpdate() override;
     
-    virtual void onTakeDamage(int amount, sp::P<Enemy> source);
+    virtual bool onTakeDamage(int amount, sp::Vector2d source);
 private:
     int shield_level;
     sp::P<sp::Node> active_item; //When we are using an inventory item, the UseItem is created in the world and will delete itself once the use is done.

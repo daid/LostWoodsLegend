@@ -30,7 +30,8 @@ private:
     std::unique_ptr<MapData> map_data;
 
     sp::P<sp::Tilemap> previous_tilemap;
-    
+
+    static constexpr int transition_time = 15;
     Transition transition = Transition::None;
     int transition_counter = 0;
     sp::Vector2d camera_source_position;

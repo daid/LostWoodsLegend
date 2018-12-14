@@ -12,6 +12,54 @@
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
 
+class OctoRock : public sp::Node
+{
+public:
+    OctoRock(sp::P<Enemy> owner, Direction direction)
+    : sp::Node(owner->getParent()), direction(direction)
+    {
+        setPosition(owner->getPosition2D() + direction.toVector() * 0.5);
+        setAnimation(sp::SpriteAnimation::load("zelda1/sprites/octo_rock.txt"));
+        render_data.shader = sp::Shader::get("object.shader");
+        animationPlay("ROCK");
+
+        sp::collision::Simple2DShape shape(sp::Vector2d(0.5, 0.5));
+        shape.type = sp::collision::Shape::Type::Sensor;
+        shape.setFilterCategory(CollisionCategory::enemy_projectile);
+        shape.setMaskFilterCategory(CollisionCategory::enemy);
+        shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
+        setCollisionShape(shape);
+
+        timeout = 60 * 10;
+    }
+
+    virtual void onFixedUpdate() override
+    {
+        setPosition(getPosition2D() + direction.toVector() * 0.15);
+        if (timeout)
+            timeout--;
+        else
+            delete this;
+    }
+
+    virtual void onCollision(sp::CollisionInfo& info)
+    {
+        if (info.other && info.other->isSolid())
+        {
+            delete this;
+            return;
+        }
+        sp::P<PlayerPawn> player = info.other;
+        if (player && player->onTakeDamage(5, this->getPosition2D()))
+        {
+            delete this;
+            return;
+        }
+    }
+private:
+    Direction direction;
+    int timeout;
+};
 
 class Octo : public Enemy
 {
@@ -25,6 +73,9 @@ public:
 
         sp::collision::Simple2DShape shape(sp::Vector2d(0.8, 0.8));
         shape.type = sp::collision::Shape::Type::Dynamic;
+        shape.setFilterCategory(CollisionCategory::enemy);
+        shape.setMaskFilterCategory(CollisionCategory::enemy);
+        shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
         setCollisionShape(shape);
 
         hp = 10;
@@ -49,6 +100,8 @@ public:
             {
                 walk_direction = Direction::random();
                 state_delay = sp::random(100, 200);
+
+                new OctoRock(this, walk_direction);
             }
             break;
         case State::Attack:
@@ -107,7 +160,7 @@ public:
     
         sp::P<PlayerPawn> player = info.other;
         if (player)
-            player->onTakeDamage(hit_damage, this);
+            player->onTakeDamage(hit_damage, this->getPosition2D());
     }
 
     enum class State
@@ -140,9 +193,9 @@ void MapScene::onFixedUpdate()
 {
     if (transition != Transition::None)
     {
-        getCamera()->setPosition(sp::Tween<sp::Vector2d>::easeOutCubic(transition_counter, 0, 30, camera_source_position, camera_target_position));
+        getCamera()->setPosition(sp::Tween<sp::Vector2d>::easeOutCubic(transition_counter, 0, transition_time, camera_source_position, camera_target_position));
         transition_counter++;
-        if (transition_counter == 30)
+        if (transition_counter == transition_time)
         {
             transition = Transition::None;
             getCamera()->setPosition(camera_target_position);
@@ -241,6 +294,8 @@ void MapScene::loadMap(sp::string map_name)
         }
     }
 
+
+    //Create the level edge collision, so enemies do not walk over the edge of the map.
     {
         sp::collision::Simple2DShape shape(sp::Rect2d(map_data->size.x / 2, 0, map_data->size.x, 1));
         shape.type = sp::collision::Shape::Type::Static;
@@ -264,12 +319,10 @@ void MapScene::loadMap(sp::string map_name)
         n->setCollisionShape(shape);
     }
 
-    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
-    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
-    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
-
     if (transition == Transition::None)
         getCamera()->setPosition(camera_target_position);
+
+    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
 }
 
 void MapScene::unloadMap(Transition transition)
