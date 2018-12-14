@@ -1,8 +1,8 @@
 #include "mapScene.h"
 #include "playerPawn.h"
-#include "enemies/enemy.h"
 #include "simpleEffect.h"
 #include "collisionBits.h"
+#include "enemies/basicEnemy.h"
 
 #include <sp2/scene/node.h>
 #include <sp2/scene/camera.h>
@@ -13,187 +13,27 @@
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
 
-class OctoRock : public sp::Node
-{
-public:
-    OctoRock(sp::P<Enemy> owner, Direction direction)
-    : sp::Node(owner->getParent()), direction(direction)
-    {
-        setPosition(owner->getPosition2D() + direction.toVector() * 0.5);
-        setAnimation(sp::SpriteAnimation::load("zelda1/sprites/octo_rock.txt"));
-        render_data.shader = sp::Shader::get("object.shader");
-        animationPlay("ROCK");
+BasicEnemy::Template enemy_octo{
+    sprite: "zelda1/sprites/octo.txt",
+    collision_rect: sp::Rect2d(0, 0, 0.8, 0.8),
+    hp: 10,
+    hit_player_damage: 5,
+    walk_speed: 1.5,
 
-        sp::collision::Simple2DShape shape(sp::Vector2d(0.5, 0.5));
-        shape.type = sp::collision::Shape::Type::Sensor;
-        shape.setFilterCategory(CollisionCategory::enemy_projectile);
-        shape.setMaskFilterCategory(CollisionCategory::enemy);
-        shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
-        setCollisionShape(shape);
-
-        timeout = 60 * 10;
-    }
-
-    virtual void onFixedUpdate() override
-    {
-        setPosition(getPosition2D() + direction.toVector() * 0.15);
-        if (timeout)
-            timeout--;
-        else
-            delete this;
-    }
-
-    virtual void onCollision(sp::CollisionInfo& info)
-    {
-        if (info.other && info.other->isSolid())
-        {
-            delete this;
-            return;
-        }
-        sp::P<PlayerPawn> player = info.other;
-        if (player && player->onTakeDamage(5, this->getPosition2D()))
-        {
-            delete this;
-            return;
-        }
-    }
-private:
-    Direction direction;
-    int timeout;
+    projectile_sprite: "zelda1/sprites/octo_rock.txt",
+    projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
+    projectile_speed: 7,
 };
+BasicEnemy::Template enemy_octo_blue{
+    sprite: "zelda1/sprites/octo_blue.txt",
+    collision_rect: sp::Rect2d(0, 0, 0.8, 0.8),
+    hp: 20,
+    hit_player_damage: 5,
+    walk_speed: 1.5,
 
-class Octo : public Enemy
-{
-public:
-    Octo(sp::P<sp::Node> parent)
-    : Enemy(parent)
-    {
-        setAnimation(sp::SpriteAnimation::load("zelda1/sprites/octo.txt"));
-        render_data.shader = sp::Shader::get("object.shader");
-        animationPlay("DOWN");
-
-        sp::collision::Simple2DShape shape(sp::Vector2d(0.8, 0.8));
-        shape.type = sp::collision::Shape::Type::Dynamic;
-        shape.setFilterCategory(CollisionCategory::enemy);
-        shape.setMaskFilterCategory(CollisionCategory::enemy);
-        shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
-        setCollisionShape(shape);
-
-        hp = 10;
-        hit_damage = 5;
-        state = State::Walk;
-        state_delay = sp::random(100, 200);
-        walk_direction = Direction::random();
-        hurt_counter = 0;
-    }
-
-    virtual void onFixedUpdate() override
-    {
-        if (state_delay > 0)
-            state_delay--;
-
-        switch(state)
-        {
-        case State::Walk:
-            setPosition(getPosition2D() + walk_direction.toVector() * 0.02);
-            if (!state_delay)
-            {
-                if (sp::random(0, 100) < 50)
-                {
-                    new OctoRock(this, walk_direction);
-                    state = State::Attack;
-                    state_delay = 35;
-                }
-                else
-                {
-                    walk_direction = Direction::random();
-                    state_delay = sp::random(100, 200);
-                }
-            }
-            break;
-        case State::Attack:
-            if (!state_delay)
-            {
-                walk_direction = Direction::random();
-                state = State::Walk;
-                state_delay = sp::random(100, 200);
-            }
-            break;
-        }
-        if (hurt_counter > 0)
-        {
-            hurt_counter--;
-            switch(hurt_counter & 3)
-            {
-            case 0: render_data.color = sp::Color(1, 1, 1); break;
-            case 1: render_data.color = sp::Color(1, 1, 0); break;
-            case 2: render_data.color = sp::Color(1, 0, 1); break;
-            case 3: render_data.color = sp::Color(0, 1, 1); break;
-            }
-        }
-
-        switch(walk_direction)
-        {
-        case Direction::Left:
-            animationPlay("RIGHT");
-            animationSetFlags(sp::SpriteAnimation::FlipFlag);
-            break;
-        case Direction::Right:
-            animationPlay("RIGHT");
-            animationSetFlags(0);
-            break;
-        case Direction::Up:
-            animationPlay("UP");
-            animationSetFlags(0);
-            break;
-        case Direction::Down:
-            animationPlay("DOWN");
-            animationSetFlags(0);
-            break;
-        }
-    }
-
-    virtual bool onTakeDamage(int amount, sp::P<PlayerPawn> source) override
-    {
-        if (hurt_counter > 0)
-            return false;
-
-        LOG(Debug, "Damage:", amount);
-        hp -= amount;
-        hurt_counter = 35;
-        if (hp <= 0)
-        {
-            (new SimpleEffect(getParent(), "zelda1/sprites/death.txt"))->setPosition(getPosition2D());
-            delete this; //TODO: Spawn death animation object.
-        }
-        return true;
-    }
-
-    virtual void onCollision(sp::CollisionInfo& info) override
-    {
-        if (info.other->isSolid() && state == State::Walk)
-            state_delay -= 10;
-    
-        sp::P<PlayerPawn> player = info.other;
-        if (player)
-            player->onTakeDamage(hit_damage, this->getPosition2D());
-    }
-
-    enum class State
-    {
-        Walk,
-        Attack
-    };
-
-private:
-    int hp;
-    int hit_damage;
-    int hurt_counter;
-
-    State state;
-    int state_delay;
-    Direction walk_direction;
-    int walk_distance;
+    projectile_sprite: "zelda1/sprites/octo_rock.txt",
+    projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
+    projectile_speed: 7,
 };
 
 
@@ -338,7 +178,8 @@ void MapScene::loadMap(sp::string map_name)
     if (transition == Transition::None)
         getCamera()->setPosition(camera_target_position);
 
-    (new Octo(getRoot()))->setPosition(sp::Vector2d(4, 4));
+    (new BasicEnemy(getRoot(), enemy_octo))->setPosition(sp::Vector2d(4, 4));
+    (new BasicEnemy(getRoot(), enemy_octo_blue))->setPosition(sp::Vector2d(4, 4));
 }
 
 void MapScene::unloadMap(Transition transition)

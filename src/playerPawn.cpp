@@ -66,6 +66,7 @@ void PlayerPawn::onFixedUpdate()
     sp::Vector2d move_request;
     if (active_item || hurt_delay > 0)
     {
+        //We cannot do anything right now. No movement, no item use.
     }
     else
     {
