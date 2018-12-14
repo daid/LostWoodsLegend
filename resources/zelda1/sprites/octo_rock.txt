@@ -8,7 +8,7 @@
 	frame_size: 16, 16
 	delay: 0.1
 	
-	[ROCK] {
+	[PROJECTILE] {
         position: 48, 112
 		frames: 0
 	}

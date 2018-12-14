@@ -10,20 +10,11 @@
 	
 	[DOWN] {
 		frames: 0, 1
-        [BLUE_DOWN] {
-            position: 0, 16
-        }
 	}
 	[RIGHT] {
 		frames: 2, 3
-        [BLUE_RIGHT] {
-            position: 0, 16
-        }
 	}
 	[UP] {
 		frames: 4, 5
-        [BLUE_UP] {
-            position: 0, 16
-        }
 	}
 }

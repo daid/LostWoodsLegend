@@ -23,6 +23,7 @@ BasicEnemy::Template enemy_octo{
     projectile_sprite: "zelda1/sprites/octo_rock.txt",
     projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
     projectile_speed: 7,
+    fire_delay: 35,
 };
 BasicEnemy::Template enemy_octo_blue{
     sprite: "zelda1/sprites/octo_blue.txt",
@@ -34,6 +35,7 @@ BasicEnemy::Template enemy_octo_blue{
     projectile_sprite: "zelda1/sprites/octo_rock.txt",
     projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
     projectile_speed: 7,
+    fire_delay: 35,
 };
 
 

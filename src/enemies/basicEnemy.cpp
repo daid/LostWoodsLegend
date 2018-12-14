@@ -95,7 +95,7 @@ void BasicEnemy::onFixedUpdate()
             {
                 new BasicEnemyProjectile(this, walk_direction, enemy_template);
                 state = State::Attack;
-                state_delay = 35;
+                state_delay = enemy_template.fire_delay;
             }
             else
             {
