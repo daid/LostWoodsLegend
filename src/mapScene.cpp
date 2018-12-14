@@ -1,6 +1,7 @@
 #include "mapScene.h"
 #include "playerPawn.h"
 #include "enemies/enemy.h"
+#include "simpleEffect.h"
 #include "collisionBits.h"
 
 #include <sp2/scene/node.h>
@@ -88,23 +89,35 @@ public:
 
     virtual void onFixedUpdate() override
     {
+        if (state_delay > 0)
+            state_delay--;
+
         switch(state)
         {
         case State::Walk:
             setPosition(getPosition2D() + walk_direction.toVector() * 0.02);
-            if (state_delay > 0)
+            if (!state_delay)
             {
-                state_delay -= 1;
-            }
-            else
-            {
-                walk_direction = Direction::random();
-                state_delay = sp::random(100, 200);
-
-                new OctoRock(this, walk_direction);
+                if (sp::random(0, 100) < 50)
+                {
+                    new OctoRock(this, walk_direction);
+                    state = State::Attack;
+                    state_delay = 35;
+                }
+                else
+                {
+                    walk_direction = Direction::random();
+                    state_delay = sp::random(100, 200);
+                }
             }
             break;
         case State::Attack:
+            if (!state_delay)
+            {
+                walk_direction = Direction::random();
+                state = State::Walk;
+                state_delay = sp::random(100, 200);
+            }
             break;
         }
         if (hurt_counter > 0)
@@ -146,10 +159,13 @@ public:
             return false;
 
         LOG(Debug, "Damage:", amount);
-        //hp -= amount;
+        hp -= amount;
         hurt_counter = 35;
         if (hp <= 0)
+        {
+            (new SimpleEffect(getParent(), "zelda1/sprites/death.txt"))->setPosition(getPosition2D());
             delete this; //TODO: Spawn death animation object.
+        }
         return true;
     }
 

@@ -1,0 +1,15 @@
+{
+	texture: zelda1/sprites/overworld_enemies.png
+	texture_size: 128, 128
+	
+	size: 1, 1
+	line_length: 8
+	loop: False
+	frame_size: 16, 16
+	delay: 0.1
+	
+	[MAIN] {
+        position: 64, 112
+		frames: 0, 1
+	}
+}
