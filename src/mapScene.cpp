@@ -13,6 +13,12 @@
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
 
+///DropsA: {"Rupee": 5, "hp": 4, "fairy": 1}
+///DropsB: {"Rupee": 3, "hp": 3, "clock": 1, "bomb": 3}
+///DropsC: {"Rupee": 5, "hp": 2, "clock": 1, "5rupees": 2}
+///DropsD: {"Rupee": 2, "hp": 6, "fairy": 2}
+
+
 BasicEnemy::Template enemy_octo{
     sprite: "zelda1/sprites/octo.txt",
     collision_rect: sp::Rect2d(0, 0, 0.8, 0.8),

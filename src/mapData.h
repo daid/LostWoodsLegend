@@ -24,6 +24,14 @@ public:
         CliffEdge,
         ShallowWater,
     };
+    class ObjectInfo
+    {
+    public:
+        sp::Vector2d position;
+        sp::string type;
+        sp::string name;
+        std::map<sp::string, sp::string> parameters;
+    };
 
     MapData(sp::string name);
 
@@ -32,6 +40,8 @@ public:
     std::vector<int> tiles;
     sp::Vector2i tilemap_size;
     sp::string tilemap_texture;
+    
+    std::vector<ObjectInfo> objects;
 };
 
 #endif//MAP_DATA_H
