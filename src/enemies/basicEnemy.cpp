@@ -5,6 +5,10 @@
 
 #include <sp2/collision/simple2d/shape.h>
 #include <sp2/graphics/spriteAnimation.h>
+#include <sp2/io/keyValueTreeLoader.h>
+
+std::map<sp::string, BasicEnemy::Template> BasicEnemy::templates;
+
 
 class BasicEnemyProjectile : public sp::Node
 {
@@ -15,7 +19,13 @@ public:
         setPosition(owner->getPosition2D() + direction.toVector() * 0.5);
         setAnimation(sp::SpriteAnimation::load(enemy_template.projectile_sprite));
         render_data.shader = sp::Shader::get("object.shader");
-        animationPlay("PROJECTILE");
+        switch(direction)
+        {
+        case Direction::Up: animationPlay("UP"); break;
+        case Direction::Down: animationPlay("DOWN"); break;
+        case Direction::Left: animationPlay("LEFT"); break;
+        case Direction::Right: animationPlay("RIGHT"); break;
+        }
 
         sp::collision::Simple2DShape shape(enemy_template.projectile_collision_rect);
         shape.type = sp::collision::Shape::Type::Sensor;
@@ -91,7 +101,7 @@ void BasicEnemy::onFixedUpdate()
         setPosition(getPosition2D() + walk_direction.toVector() * enemy_template.walk_speed / 60.0);
         if (!state_delay)
         {
-            if (sp::random(0, 100) < 50)
+            if (enemy_template.projectile_speed > 0 && sp::random(0, 100) < 50)
             {
                 new BasicEnemyProjectile(this, walk_direction, enemy_template);
                 state = State::Attack;
@@ -169,4 +179,24 @@ void BasicEnemy::onCollision(sp::CollisionInfo& info)
     sp::P<PlayerPawn> player = info.other;
     if (player)
         player->onTakeDamage(enemy_template.hit_player_damage, this->getPosition2D());
+}
+
+void BasicEnemy::loadEnemyTemplates()
+{
+    for(auto& entry : sp::io::KeyValueTreeLoader::load("zelda1/enemies.txt")->getFlattenNodesByIds())
+    {
+        Template t;
+        t.sprite = entry.second["sprite"];
+        t.collision_rect.size = sp::stringutil::convert::toVector2d(entry.second["collision"]);
+        t.hp = sp::stringutil::convert::toInt(entry.second["hp"]);
+        t.hit_player_damage = sp::stringutil::convert::toInt(entry.second["hit_player_damage"]);
+        t.walk_speed = sp::stringutil::convert::toFloat(entry.second["walk_speed"]);
+
+        t.projectile_sprite = entry.second["projectile_sprite"];
+        t.projectile_collision_rect.size = sp::stringutil::convert::toVector2d(entry.second["projectile_collision"]);
+        t.projectile_speed = sp::stringutil::convert::toFloat(entry.second["projectile_speed"]);
+        t.fire_delay = sp::stringutil::convert::toInt(entry.second["fire_delay"]);
+        LOG(Debug, t.sprite);
+        templates[entry.first] = t;
+    }
 }

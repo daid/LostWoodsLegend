@@ -7,15 +7,15 @@
 	loop: True
 	frame_size: 16, 16
 	delay: 0.1
+	position: 0, 80
 	
-    position: 48, 112
-    frames: 0
-	[UP] {
-	}
 	[DOWN] {
-	}
-	[LEFT] {
+		frames: 0, 1
 	}
 	[RIGHT] {
+		frames: 2, 3
+	}
+	[UP] {
+		frames: 4, 5
 	}
 }

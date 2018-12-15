@@ -102,6 +102,23 @@
                  "width":16,
                  "x":96,
                  "y":64
+                }, 
+                {
+                 "height":16,
+                 "id":6,
+                 "name":"Zora",
+                 "properties":[
+                        {
+                         "name":"position",
+                         "type":"string",
+                         "value":"random"
+                        }],
+                 "rotation":0,
+                 "type":"ENEMY",
+                 "visible":true,
+                 "width":16,
+                 "x":176,
+                 "y":96
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -110,7 +127,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"left-up",
  "tiledversion":"1.2.1",

@@ -1,0 +1,55 @@
+{
+	[OctoRed] {
+		sprite: zelda1/sprites/octo.txt
+		collision: 0.8, 0.8
+		hp: 10
+		hit_player_damage: 5
+		walk_speed: 1.5
+
+		projectile_sprite: zelda1/sprites/octo_rock.txt
+		projectile_collision: 0.3, 0.3,
+		projectile_speed: 7
+		fire_delay: 35
+		
+		[OctoBlue] {
+			sprite: zelda1/sprites/octo_blue.txt
+			hp: 20
+		}
+	}
+	
+	[Moblin] {
+		sprite: zelda1/sprites/moblin.txt
+		collision: 0.8, 0.8
+		hp: 20
+		hit_player_damage: 5
+		walk_speed: 1.5
+
+		projectile_sprite: zelda1/sprites/arrow.txt
+		projectile_collision: 0.4, 0.4,
+		projectile_speed: 7
+		fire_delay: 35
+		
+		[MoblinBlack] {
+			sprite: zelda1/sprites/moblin_black.txt
+			hp: 30
+		}
+	}
+
+	[Lynel] {
+		sprite: zelda1/sprites/lynel.txt
+		collision: 0.8, 0.8
+		hp: 40
+		hit_player_damage: 10
+		walk_speed: 1.5
+
+		projectile_sprite: zelda1/sprites/arrow.txt
+		projectile_collision: 0.4, 0.4,
+		projectile_speed: 7
+		fire_delay: 0
+		
+		[LynelBlue] {
+			sprite: zelda1/sprites/lynel_blue.txt
+			hp: 60
+		}
+	}
+}

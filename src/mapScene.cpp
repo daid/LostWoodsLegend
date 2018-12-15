@@ -205,10 +205,11 @@ void MapScene::loadMap(sp::string map_name)
                     position = sp::Vector2d(findRandomSidePosition()) + sp::Vector2d(0.5, 0.5);
                 } while(minimalPlayerDistance(position) < 3.0);
             }
-            if (object.name == "OctoRed")
-                (new BasicEnemy(getRoot(), enemy_octo))->setPosition(position);
-            else if (object.name == "OctoBlue")
-                (new BasicEnemy(getRoot(), enemy_octo_blue))->setPosition(position);
+            auto t = BasicEnemy::templates.find(object.name);
+            if (t != BasicEnemy::templates.end())
+                (new BasicEnemy(getRoot(), t->second))->setPosition(position);
+            else
+                LOG(Warning, "Unknown enemy type:", object.name);
         }
     }
 }

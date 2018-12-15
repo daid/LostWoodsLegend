@@ -8,14 +8,19 @@
 	frame_size: 16, 16
 	delay: 0.1
 	
-    position: 48, 112
-    frames: 0
+    position: 96, 112
 	[UP] {
+		frames: 0
 	}
 	[DOWN] {
+		frames: 0
+		flip: V
 	}
 	[LEFT] {
+		frames: 1
+		flip: H
 	}
 	[RIGHT] {
+		frames: 1
 	}
 }

@@ -57,6 +57,11 @@ private:
     int walk_distance;
 
     const Template& enemy_template;
+
+public:
+    static void loadEnemyTemplates();
+    
+    static std::map<sp::string, Template> templates;
 };
 
 
