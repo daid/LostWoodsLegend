@@ -2,6 +2,7 @@
 #include "playerPawn.h"
 #include "simpleEffect.h"
 #include "collisionBits.h"
+#include "entrance.h"
 #include "enemies/basicEnemy.h"
 
 #include <sp2/scene/node.h>
@@ -70,6 +71,8 @@ void MapScene::onFixedUpdate()
 
 void MapScene::loadMap(sp::string map_name)
 {
+    LOG(Info, "Loading map:", map_name);
+
     map_data = std::unique_ptr<MapData>(new MapData(map_name));
     camera_target_position = sp::Vector2d(map_data->size.x / 2, map_data->size.y / 2);
 
@@ -188,9 +191,9 @@ void MapScene::loadMap(sp::string map_name)
     else
         getCamera()->setPosition(camera_source_position);
 
-    for(const auto& object : map_data->objects)
+    for(auto& object : map_data->objects)
     {
-        sp::Vector2d position = object.position;
+        sp::Vector2d position = object.area.position + object.area.size * 0.5;
         if (object.type == "ENEMY")
         {
             if (object.properties.find("position")->second == "random")
@@ -210,6 +213,14 @@ void MapScene::loadMap(sp::string map_name)
                 (new BasicEnemy(getRoot(), t->second))->setPosition(position);
             else
                 LOG(Warning, "Unknown enemy type:", object.name);
+        }
+        else if(object.type == "ENTRANCE")
+        {
+            new Entrance(getRoot(), object.area, object.name, sp::stringutil::convert::toVector2d(object.properties["exit"]));
+        }
+        else
+        {
+            LOG(Warning, "Unknown object type on map:", object.type);
         }
     }
 }

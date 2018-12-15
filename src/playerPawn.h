@@ -8,6 +8,7 @@
 
 
 class Enemy;
+class Entrance;
 class PlayerPawn : public sp::Node
 {
 public:
@@ -16,6 +17,9 @@ public:
     virtual void onFixedUpdate() override;
     
     virtual bool onTakeDamage(int amount, sp::Vector2d source);
+    
+    void setWarpEntrance(sp::P<Entrance> entrance) { warp_target = entrance; }
+    const sp::P<Entrance>& getWarpTarget() { return warp_target; }
 private:
     int shield_level;
     sp::P<sp::Node> active_item; //When we are using an inventory item, the UseItem is created in the world and will delete itself once the use is done.
@@ -27,6 +31,8 @@ private:
     int hurt_delay = 0;
     int invincibility_time = 0;
     sp::Vector2d hurt_direction;
+    
+    sp::P<Entrance> warp_target;
 };
 
 #endif // PLAYER_PAWN_H

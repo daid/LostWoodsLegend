@@ -30,6 +30,8 @@ public:
     sp::Vector2i findRandomPosition();
     sp::Vector2i findRandomSidePosition();
     double minimalPlayerDistance(sp::Vector2d position);
+    
+    const std::unique_ptr<MapData>& getMapData() { return map_data; }
 private:
     std::unique_ptr<MapData> map_data;
 

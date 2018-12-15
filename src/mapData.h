@@ -2,6 +2,7 @@
 #define MAP_DATA_H
 
 #include <sp2/math/vector2.h>
+#include <sp2/math/rect.h>
 #include <sp2/string.h>
 #include <vector>
 
@@ -27,7 +28,7 @@ public:
     class ObjectInfo
     {
     public:
-        sp::Vector2d position;
+        sp::Rect2d area;
         sp::string type;
         sp::string name;
         std::map<sp::string, sp::string> properties;

@@ -24,6 +24,7 @@
 #include "lightSource.h"
 #include "enemies/basicEnemy.h"
 #include "darknessOverlayRenderer.h"
+#include "entrance.h"
 #include "mapScene.h"
 
 
@@ -52,35 +53,61 @@ public:
 
     virtual void onUpdate(float delta) override
     {
-        if (player->getPosition2D().x < 0)
+        if (player->getWarpTarget())
+        {
+            sp::P<Entrance> entrance = player->getWarpTarget();
+            map_name = entrance->getMapName();
+            map_position.x = -1;
+            int idx = map_name.rfind("/");
+            if (idx > 0)
+            {
+                sp::string part = map_name.substr(idx + 1);
+                idx = part.find("-");
+                if (idx > 0 && part[0] >= '0' && part[0] <= '9')
+                {
+                    map_name = map_name.substr(0, -part.length() - 1);
+                    map_position.x = sp::stringutil::convert::toInt(part);
+                    map_position.y = sp::stringutil::convert::toInt(part.substr(idx + 1));
+                }
+            }
+            sp::Vector2d target_position = entrance->getTargetPosition();
+            scene->unloadMap(MapScene::Transition::None);
+            player->setPosition(target_position);
+            if (map_position.x == -1)
+                scene->loadMap(map_name + ".json");
+            else
+                scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+        }
+        else if (player->getPosition2D().x < 0 && map_position.x != -1)
         {
             map_position.x -= 1;
             scene->unloadMap(MapScene::Transition::Left);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(16, 0));
+            player->setPosition(player->getPosition2D() + sp::Vector2d(scene->getMapData()->size.x, 0));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
-        if (player->getPosition2D().x > 16)
+        else if (player->getPosition2D().x > scene->getMapData()->size.x && map_position.x != -1)
         {
             map_position.x += 1;
             scene->unloadMap(MapScene::Transition::Right);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(-16, 0));
+            player->setPosition(player->getPosition2D() + sp::Vector2d(-scene->getMapData()->size.x, 0));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
-        if (player->getPosition2D().y < 0)
+        else if (player->getPosition2D().y < 0 && map_position.x != -1)
         {
             map_position.y += 1;
             scene->unloadMap(MapScene::Transition::Down);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(0, 10));
+            player->setPosition(player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->size.y));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
-        if (player->getPosition2D().y > 10)
+        else if (player->getPosition2D().y > scene->getMapData()->size.y && map_position.x != -1)
         {
             map_position.y -= 1;
             scene->unloadMap(MapScene::Transition::Up);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(0, -10));
+            player->setPosition(player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->size.y));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
         }
     }
+
 private:
     sp::P<MapScene> scene;
     sp::P<PlayerPawn> player;

@@ -196,7 +196,6 @@ void BasicEnemy::loadEnemyTemplates()
         t.projectile_collision_rect.size = sp::stringutil::convert::toVector2d(entry.second["projectile_collision"]);
         t.projectile_speed = sp::stringutil::convert::toFloat(entry.second["projectile_speed"]);
         t.fire_delay = sp::stringutil::convert::toInt(entry.second["fire_delay"]);
-        LOG(Debug, t.sprite);
         templates[entry.first] = t;
     }
 }

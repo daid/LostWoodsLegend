@@ -30,8 +30,10 @@ MapData::MapData(sp::string name)
                 ObjectInfo info;
                 info.type = obj["type"].string_value();
                 info.name = obj["name"].string_value();
-                info.position.x = (obj["x"].number_value() + obj["width"].number_value() * 0.5) / 16.0;
-                info.position.y = size.y - (obj["y"].number_value() + obj["height"].number_value() * 0.5) / 16.0;
+                info.area.position.x = obj["x"].number_value() / 16.0;
+                info.area.position.y = size.y - (obj["y"].number_value() + obj["height"].number_value()) / 16.0;
+                info.area.size.x = obj["width"].number_value() / 16.0;
+                info.area.size.y = obj["height"].number_value() / 16.0;
                 for(const auto& property : obj["properties"].array_items())
                 {
                     info.properties.emplace(property["name"].string_value(), property["value"].string_value());
