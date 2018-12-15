@@ -26,6 +26,10 @@ public:
     void unloadMap(Transition transition=Transition::None);
 
     virtual void onFixedUpdate() override;
+    
+    sp::Vector2i findRandomPosition();
+    sp::Vector2i findRandomSidePosition();
+    double minimalPlayerDistance(sp::Vector2d position);
 private:
     std::unique_ptr<MapData> map_data;
 

@@ -61,6 +61,7 @@ void MapScene::onFixedUpdate()
         transition_counter++;
         if (transition_counter == transition_time)
         {
+            previous_tilemap.destroy();
             transition = Transition::None;
             getCamera()->setPosition(camera_target_position);
         }
@@ -158,7 +159,6 @@ void MapScene::loadMap(sp::string map_name)
         }
     }
 
-
     //Create the level edge collision, so enemies do not walk over the edge of the map.
     {
         sp::collision::Simple2DShape shape(sp::Rect2d(map_data->size.x / 2, 0, map_data->size.x, 1));
@@ -185,9 +185,32 @@ void MapScene::loadMap(sp::string map_name)
 
     if (transition == Transition::None)
         getCamera()->setPosition(camera_target_position);
+    else
+        getCamera()->setPosition(camera_source_position);
 
-    (new BasicEnemy(getRoot(), enemy_octo))->setPosition(sp::Vector2d(4, 4));
-    (new BasicEnemy(getRoot(), enemy_octo_blue))->setPosition(sp::Vector2d(4, 4));
+    for(const auto& object : map_data->objects)
+    {
+        sp::Vector2d position = object.position;
+        if (object.type == "ENEMY")
+        {
+            if (object.properties.find("position")->second == "random")
+            {
+                do {
+                    position = sp::Vector2d(findRandomPosition()) + sp::Vector2d(0.5, 0.5);
+                } while(minimalPlayerDistance(position) < 3.0);
+            }
+            if (object.properties.find("position")->second == "random_side")
+            {
+                do {
+                    position = sp::Vector2d(findRandomSidePosition()) + sp::Vector2d(0.5, 0.5);
+                } while(minimalPlayerDistance(position) < 3.0);
+            }
+            if (object.name == "OctoRed")
+                (new BasicEnemy(getRoot(), enemy_octo))->setPosition(position);
+            else if (object.name == "OctoBlue")
+                (new BasicEnemy(getRoot(), enemy_octo_blue))->setPosition(position);
+        }
+    }
 }
 
 void MapScene::unloadMap(Transition transition)
@@ -227,4 +250,43 @@ void MapScene::unloadMap(Transition transition)
         if (!player && !camera)
             node.destroy();
     }
+}
+
+sp::Vector2i MapScene::findRandomPosition()
+{
+    while(true)
+    {
+        sp::Vector2i position(sp::irandom(1, map_data->size.x - 1), sp::irandom(1, map_data->size.y - 1));
+        if (map_data->tile_types[map_data->tiles[position.x + position.y * map_data->size.x]] == MapData::TileType::Open)
+            return position;
+    }
+}
+
+sp::Vector2i MapScene::findRandomSidePosition()
+{
+    while(true)
+    {
+        sp::Vector2i position;
+        switch(sp::irandom(0, 3))
+        {
+        case 0: position = sp::Vector2i(0, sp::irandom(1, map_data->size.y - 1)); break;
+        case 1: position = sp::Vector2i(map_data->size.x - 1, sp::irandom(1, map_data->size.y - 1)); break;
+        case 2: position = sp::Vector2i(sp::irandom(1, map_data->size.x - 1), 0); break;
+        case 3: position = sp::Vector2i(sp::irandom(1, map_data->size.x - 1), map_data->size.y - 1); break;
+        }
+        if (map_data->tile_types[map_data->tiles[position.x + position.y * map_data->size.x]] == MapData::TileType::Open)
+            return position;
+    }
+}
+
+double MapScene::minimalPlayerDistance(sp::Vector2d position)
+{
+    double distance = map_data->size.x + map_data->size.y;
+    for(sp::Node* obj : getRoot()->getChildren())
+    {
+        sp::P<PlayerPawn> player = sp::P<sp::Node>(obj);
+        if (player)
+            distance = std::min(distance, (player->getPosition2D() - position).length());
+    }
+    return distance;
 }

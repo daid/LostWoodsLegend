@@ -13,11 +13,33 @@ MapData::MapData(sp::string name)
     size.y = map_json["height"].int_value();
     int index_offset = map_json["tilesets"][0]["firstgid"].int_value();
 
-    const json11::Json& tile_data_json = map_json["layers"][0]["data"];
-    tiles.resize(size.x * size.y);
-    for (int y = 0; y < size.y; y++)
-        for (int x = 0; x < size.x; x++)
-            tiles[x + y * size.x] = tile_data_json[x + (size.y - 1 - y) * size.x].int_value() - index_offset;
+    for(const auto& layer : map_json["layers"].array_items())
+    {
+        if (layer["type"].string_value() == "tilelayer")
+        {
+            const json11::Json& tile_data_json = layer["data"];
+            tiles.resize(size.x * size.y);
+            for (int y = 0; y < size.y; y++)
+                for (int x = 0; x < size.x; x++)
+                    tiles[x + y * size.x] = tile_data_json[x + (size.y - 1 - y) * size.x].int_value() - index_offset;
+        }
+        if (layer["type"].string_value() == "objectgroup")
+        {
+            for(const auto& obj : layer["objects"].array_items())
+            {
+                ObjectInfo info;
+                info.type = obj["type"].string_value();
+                info.name = obj["name"].string_value();
+                info.position.x = (obj["x"].number_value() + obj["width"].number_value() * 0.5) / 16.0;
+                info.position.y = size.y - (obj["y"].number_value() + obj["height"].number_value() * 0.5) / 16.0;
+                for(const auto& property : obj["properties"].array_items())
+                {
+                    info.properties.emplace(property["name"].string_value(), property["value"].string_value());
+                }
+                objects.push_back(info);
+            }
+        }
+    }
 
     sp::string tileset_name = map_json["tilesets"][0]["source"].string_value();
     tileset_name = name.substr(0, name.rfind("/")) + "/" + tileset_name;

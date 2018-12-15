@@ -30,7 +30,7 @@ public:
         sp::Vector2d position;
         sp::string type;
         sp::string name;
-        std::map<sp::string, sp::string> parameters;
+        std::map<sp::string, sp::string> properties;
     };
 
     MapData(sp::string name);
