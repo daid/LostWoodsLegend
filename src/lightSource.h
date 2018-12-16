@@ -7,10 +7,10 @@
 class LightSource : public sp::Node
 {
 public:
-    LightSource(sp::P<sp::Node> parent)
-    : sp::Node(parent) {}
+    LightSource(sp::P<sp::Node> parent, float radius)
+    : sp::Node(parent), radius(radius) {}
 
-    float radius = 1.0;
+    float radius;
 };
 
 #endif//LIGHTSOURCE_H

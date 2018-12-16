@@ -1,6 +1,7 @@
 #include "mapData.h"
 
 #include <sp2/io/resourceProvider.h>
+#include <sp2/stringutil/convert.h>
 #include <json11/json11.hpp>
 
 
@@ -41,6 +42,11 @@ MapData::MapData(sp::string name)
                 objects.push_back(info);
             }
         }
+    }
+    for(const auto& property : map_json["properties"].array_items())
+    {
+        if (property["name"].string_value() == "darkness")
+            darkness = sp::stringutil::convert::toBool(property["value"].string_value());
     }
 
     sp::string tileset_name = map_json["tilesets"][0]["source"].string_value();

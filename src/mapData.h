@@ -42,6 +42,8 @@ public:
     sp::Vector2i tilemap_size;
     sp::string tilemap_texture;
     
+    bool darkness = false;
+    
     std::vector<ObjectInfo> objects;
 };
 

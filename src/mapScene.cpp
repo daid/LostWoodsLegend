@@ -217,7 +217,7 @@ void MapScene::loadMap(sp::string map_name)
         }
         else if(object.type == "NPC")
         {
-            NPC* npc = new NPC(getRoot(), object.name);
+            NPC* npc = new NPC(getRoot(), object.name, object.properties);
             npc->setPosition(object.area.center());
         }
         else if(object.type == "ENTRANCE")

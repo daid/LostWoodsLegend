@@ -38,8 +38,15 @@ sp::io::Keybinding escape_key{"exit", "Escape"};
 class GameManager : public sp::Updatable
 {
 public:
-    GameManager()
+    GameManager(sp::P<sp::SceneGraphicsLayer> scene_layer)
     {
+        scene_layer->addRenderPass(new sp::BasicNodeRenderPass());
+        darkness_render_pass = new DarknessRenderPass();
+        scene_layer->addRenderPass(darkness_render_pass);
+#ifdef DEBUG
+        scene_layer->addRenderPass(new sp::CollisionRenderPass());
+#endif
+
         scene = new MapScene("MAIN");
 
         map_position = sp::Vector2i(7, 7);
@@ -48,7 +55,7 @@ public:
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
 
         player = new PlayerPawn(scene->getRoot(), controls0);
-        (new LightSource(player))->radius = 3.5;
+        new LightSource(player, 0.5);
     }
 
     virtual void onUpdate(float delta) override
@@ -77,6 +84,7 @@ public:
                 scene->loadMap(map_name + ".json");
             else
                 scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            darkness_render_pass->enabled = scene->getMapData()->darkness;
         }
         else if (player->getPosition2D().x < 0 && map_position.x != -1)
         {
@@ -84,6 +92,7 @@ public:
             scene->unloadMap(MapScene::Transition::Left);
             player->setPosition(player->getPosition2D() + sp::Vector2d(scene->getMapData()->size.x, 0));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            darkness_render_pass->enabled = scene->getMapData()->darkness;
         }
         else if (player->getPosition2D().x > scene->getMapData()->size.x && map_position.x != -1)
         {
@@ -91,6 +100,7 @@ public:
             scene->unloadMap(MapScene::Transition::Right);
             player->setPosition(player->getPosition2D() + sp::Vector2d(-scene->getMapData()->size.x, 0));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            darkness_render_pass->enabled = scene->getMapData()->darkness;
         }
         else if (player->getPosition2D().y < 0 && map_position.x != -1)
         {
@@ -98,6 +108,7 @@ public:
             scene->unloadMap(MapScene::Transition::Down);
             player->setPosition(player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->size.y));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            darkness_render_pass->enabled = scene->getMapData()->darkness;
         }
         else if (player->getPosition2D().y > scene->getMapData()->size.y && map_position.x != -1)
         {
@@ -105,6 +116,7 @@ public:
             scene->unloadMap(MapScene::Transition::Up);
             player->setPosition(player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->size.y));
             scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+            darkness_render_pass->enabled = scene->getMapData()->darkness;
         }
     }
 
@@ -139,14 +151,9 @@ int main(int argc, char** argv)
     new sp::gui::Scene(sp::Vector2d(640, 480), sp::gui::Scene::Direction::Horizontal);
 
     sp::P<sp::SceneGraphicsLayer> scene_layer = new sp::SceneGraphicsLayer(1);
-    scene_layer->addRenderPass(new sp::BasicNodeRenderPass());
-    scene_layer->addRenderPass(new DarknessRenderPass());
-#ifdef DEBUG
-    scene_layer->addRenderPass(new sp::CollisionRenderPass());
-#endif
     window->addLayer(scene_layer);
 
-    new GameManager();
+    new GameManager(scene_layer);
 
     engine->run();
 

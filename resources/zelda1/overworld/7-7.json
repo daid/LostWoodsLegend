@@ -26,7 +26,7 @@
                         {
                          "name":"exit",
                          "type":"string",
-                         "value":"8,0"
+                         "value":"8,0.5"
                         }],
                  "rotation":0,
                  "type":"ENTRANCE",
