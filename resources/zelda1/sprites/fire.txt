@@ -1,0 +1,20 @@
+{
+	texture: zelda1/sprites/effects.png
+	texture_size: 128, 128
+	
+	size: 1, 1
+	line_length: 8
+	loop: True
+	frame_size: 16, 16
+	delay: 0.1
+	
+	position: 0, 0
+	frames: 0, 0
+	flip: 0, H
+	[UP] {
+	}
+	[DOWN] {
+	}
+	[RIGHT] {
+	}
+}

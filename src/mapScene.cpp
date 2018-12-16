@@ -3,6 +3,7 @@
 #include "simpleEffect.h"
 #include "collisionBits.h"
 #include "entrance.h"
+#include "npc.h"
 #include "enemies/basicEnemy.h"
 
 #include <sp2/scene/node.h>
@@ -193,7 +194,7 @@ void MapScene::loadMap(sp::string map_name)
 
     for(auto& object : map_data->objects)
     {
-        sp::Vector2d position = object.area.position + object.area.size * 0.5;
+        sp::Vector2d position = object.area.center();
         if (object.type == "ENEMY")
         {
             if (object.properties.find("position")->second == "random")
@@ -213,6 +214,11 @@ void MapScene::loadMap(sp::string map_name)
                 (new BasicEnemy(getRoot(), t->second))->setPosition(position);
             else
                 LOG(Warning, "Unknown enemy type:", object.name);
+        }
+        else if(object.type == "NPC")
+        {
+            NPC* npc = new NPC(getRoot(), object.name);
+            npc->setPosition(object.area.center());
         }
         else if(object.type == "ENTRANCE")
         {
