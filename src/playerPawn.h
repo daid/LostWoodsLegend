@@ -9,6 +9,7 @@
 
 class Enemy;
 class Entrance;
+class LightSource;
 class PlayerPawn : public sp::Node
 {
 public:
@@ -23,6 +24,7 @@ public:
 private:
     int shield_level;
     sp::P<sp::Node> active_item; //When we are using an inventory item, the UseItem is created in the world and will delete itself once the use is done.
+    sp::P<LightSource> light_source;
 
     sp::Vector2d previous_position;
     Direction direction;

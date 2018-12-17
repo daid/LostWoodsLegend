@@ -1,0 +1,54 @@
+[HUD] {
+	// This HUD should contain:
+	// Hearth contain list
+	// 2 active item selection with:
+	// - Icon
+	// - Item level or item count
+	// Money count
+	// Magic meter
+
+	stretch: true
+	
+	[HEARTHS] {
+		position: 8, 8
+		size: 0, 0
+		alignment: topleft
+		
+		type: label
+		text.alignment: topleft
+		caption: #F#H#E
+	}
+	
+	{
+		alignment: topright
+		layout: horizontal
+		match_content_size: true
+		
+		[ITEM1] {
+			@ref: ITEM_BOX
+		}
+		[ITEM2] {
+			@ref: ITEM_BOX
+		}
+	}
+}
+
+[@ITEM_BOX] {
+	type: panel
+	size: 32, 32
+	[ICON] {
+		type: image
+		size: 24, 24
+		margin: 4
+		image: gui/theme/panel.png
+
+		[LABEL] {
+			alignment: bottomright
+			stretch: true
+
+			type: label
+			caption: 00
+			text.alignment: bottomright
+		}
+	}
+}

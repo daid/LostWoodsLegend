@@ -39,7 +39,7 @@ void DarknessRenderPass::render(sp::RenderQueue& queue)
     {
         glStencilFunc(GL_NEVER, 2, 0xFF);
     });
-    circle_radius_scale = 0.8;//Then render the fully 100% lit areas.
+    circle_radius_scale = 0.7;//Then render the fully 100% lit areas.
     sp::BasicNodeRenderPass::render(queue);    
 
     //Setup rendering for the 100% dark areas, with a fullscreen overlay to stencil buffer value 0.

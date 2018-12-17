@@ -4,6 +4,7 @@
 #include <sp2/io/directoryResourceProvider.h>
 #include <sp2/graphics/gui/scene.h>
 #include <sp2/graphics/gui/theme.h>
+#include <sp2/graphics/gui/loader.h>
 #include <sp2/graphics/scene/graphicslayer.h>
 #include <sp2/graphics/scene/basicnoderenderpass.h>
 #include <sp2/graphics/scene/collisionrenderpass.h>
@@ -46,16 +47,16 @@ public:
 #ifdef DEBUG
         scene_layer->addRenderPass(new sp::CollisionRenderPass());
 #endif
-
         scene = new MapScene("MAIN");
+        gui = sp::gui::Loader::load("gui/hud.gui", "HUD");
 
+        //TODO: This is hardcoded data and should be loaded from some kind of world/game file.
         map_position = sp::Vector2i(7, 7);
         map_name = "zelda1/overworld";
 
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
 
         player = new PlayerPawn(scene->getRoot(), controls0);
-        new LightSource(player, 0.5);
     }
 
     virtual void onUpdate(float delta) override
@@ -124,6 +125,7 @@ private:
     sp::P<MapScene> scene;
     sp::P<PlayerPawn> player;
     sp::P<DarknessRenderPass> darkness_render_pass;
+    sp::P<sp::gui::Widget> gui;
     sp::Vector2i map_position;
     sp::string map_name;
 };
@@ -148,7 +150,7 @@ int main(int argc, char** argv)
 #endif
 
     sp::gui::Theme::loadTheme("default", "gui/theme/basic.theme.txt");
-    new sp::gui::Scene(sp::Vector2d(640, 480), sp::gui::Scene::Direction::Horizontal);
+    new sp::gui::Scene(sp::Vector2d(320, 240), sp::gui::Scene::Direction::Horizontal);
 
     sp::P<sp::SceneGraphicsLayer> scene_layer = new sp::SceneGraphicsLayer(1);
     window->addLayer(scene_layer);

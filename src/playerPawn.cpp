@@ -1,6 +1,7 @@
 #include "playerPawn.h"
 #include "enemies/enemy.h"
 #include "collisionBits.h"
+#include "lightSource.h"
 
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/collision/simple2d/shape.h>
@@ -57,6 +58,8 @@ PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
     setCollisionShape(shape);
 
     shield_level = 1;
+    
+    light_source = new LightSource(this, 0.4);
 }
 
 void PlayerPawn::onFixedUpdate()

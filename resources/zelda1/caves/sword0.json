@@ -65,7 +65,7 @@
                         {
                          "name":"light_range",
                          "type":"string",
-                         "value":"5"
+                         "value":"6"
                         }],
                  "rotation":0,
                  "type":"NPC",
@@ -82,7 +82,7 @@
                         {
                          "name":"light_range",
                          "type":"string",
-                         "value":"5"
+                         "value":"6"
                         }],
                  "rotation":0,
                  "type":"NPC",
