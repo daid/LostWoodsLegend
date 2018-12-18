@@ -1,0 +1,36 @@
+{
+    [SWORD] {
+        type: usable
+        name: Wooden Sword
+    }
+    [SHIELD] {
+        type: usable
+        name: Shield
+    }
+    [BOW] {
+        type: usable
+        name: Bow
+        ammo: ARROW, SILVER_ARROW
+    }
+    [BOMB] {
+        type: usable
+        name: Bomb
+        ammo: BOMBS
+    }
+    
+    [ARROW] {
+        type: ammo
+        name: Arrow
+        capacity: 20
+    }
+    [SILVER_ARROW] {
+        type: ammo
+        name: Silver Arrow
+        capacity: 20
+    }
+    [BOMBS] {
+        type: ammo
+        name: Bombs
+        capacity: 8
+    }
+}
