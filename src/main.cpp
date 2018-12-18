@@ -27,6 +27,7 @@
 #include "darknessOverlayRenderer.h"
 #include "entrance.h"
 #include "mapScene.h"
+#include "equipment.h"
 
 
 sp::P<sp::Window> window;
@@ -141,6 +142,7 @@ int main(int argc, char** argv)
     sp::texture_manager.setDefaultSmoothFiltering(false);
     
     BasicEnemy::loadEnemyTemplates();
+    loadEquipmentList();
 
     //Create a window to render on, and our engine.
     window = new sp::Window(4.0/3.0);
