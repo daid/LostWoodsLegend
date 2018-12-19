@@ -38,17 +38,19 @@
 	size: 32, 32
 	[ICON] {
 		type: image
-		size: 24, 24
-		margin: 4
-		image: gui/theme/panel.png
+		size: 16, 16
+		margin: 8
+		image: zelda1/sprites/items.png
+		uv: 0, 0, 0.25, 0.25
 
-		[LABEL] {
-			alignment: bottomright
-			stretch: true
-
-			type: label
-			caption: 00
-			text.alignment: bottomright
-		}
 	}
+    [LABEL] {
+        alignment: bottomright
+        stretch: true
+        margin: 4
+
+        type: label
+        caption: 00
+        text.alignment: bottomright
+    }
 }

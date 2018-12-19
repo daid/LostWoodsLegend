@@ -2,6 +2,7 @@
 #define EQUIPMENT_H
 
 #include <sp2/string.h>
+#include <sp2/math/rect.h>
 
 
 class Equipment
@@ -10,13 +11,16 @@ public:
     sp::string id;
     sp::string name;
     sp::string sprite;
+    sp::Rect2d sprite_uv;
+    
+    virtual~Equipment() {}
 };
 
 class AmmoEquipment;
 class UsableEquipment : public Equipment
 {
 public:
-    std::vector<AmmoEquipment*> ammo_types;
+    std::vector<const AmmoEquipment*> ammo_types;
 };
 
 class AmmoEquipment : public Equipment
@@ -38,6 +42,7 @@ public:
 };
 
 void loadEquipmentList();
-Equipment* findEquipment(sp::string id);
+template<typename T> const T* findEquipment(sp::string id) { return dynamic_cast<const T*>(findEquipment<Equipment>(id)); }
+template<> const Equipment* findEquipment<Equipment>(sp::string id);
 
 #endif//EQUIPMENT_H

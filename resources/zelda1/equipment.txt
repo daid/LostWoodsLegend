@@ -2,6 +2,8 @@
     [SWORD] {
         type: usable
         name: Wooden Sword
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0, 0, 0.25, 0.25
     }
     [SHIELD] {
         type: usable
