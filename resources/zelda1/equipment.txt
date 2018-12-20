@@ -5,21 +5,33 @@
 		sprite: zelda1/sprites/items.png
 		sprite_uv: 0, 0, 0.25, 0.25
     }
+    [SWORD2] {
+        type: usable
+        name: ? Sword
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0.25, 0, 0.25, 0.25
+    }
     [SHIELD] {
         type: usable
         name: Shield
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0, 0.25, 0.25, 0.25
     }
     [BOW] {
         type: usable
         name: Bow
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0, 0.5, 0.25, 0.25
         ammo: ARROW, SILVER_ARROW
     }
     [BOMB] {
         type: usable
         name: Bomb
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0.25, 0.5, 0.25, 0.25
         ammo: BOMBS
     }
-    
+
     [ARROW] {
         type: ammo
         name: Arrow

@@ -24,10 +24,10 @@
 		layout: horizontal
 		match_content_size: true
 		
-		[ITEM1] {
+		[ITEM0] {
 			@ref: ITEM_BOX
 		}
-		[ITEM2] {
+		[ITEM1] {
 			@ref: ITEM_BOX
 		}
 	}

@@ -30,31 +30,39 @@ public:
     class Ammo
     {
     public:
-        AmmoEquipment* equipment = nullptr;
+        const AmmoEquipment* equipment = nullptr;
         int amount = 0;
         int capacity = 0;
     };
     class Usable
     {
     public:
-        UsableEquipment* equipment = nullptr;
-        UsableEquipment* selected_ammo = nullptr;
+        const UsableEquipment* equipment = nullptr;
+        const AmmoEquipment* ammo = nullptr;
     };
     class Collectable
     {
-        CollectableEquipment* equipment = nullptr;
+    public:
+        const CollectableEquipment* equipment = nullptr;
         int amount = 0;
     };
 
-    Usable left_item;
-    Usable right_item;
+    static constexpr int active_item_count = 2;
+    Usable active_items[active_item_count];
     std::vector<Usable> equipment;
     std::vector<Ammo> ammo;
 
-    std::vector<UniqueEquipment*> uniques;
+    std::vector<const UniqueEquipment*> uniques;
     std::vector<Collectable> collectables;
 
     //TODO: Dungeon specific items.
+
+    //Add an item to this players inventory, returns true if this was successful.
+    //  This will fail if this player already has this item.
+    bool addItem(sp::string id);
+
+    bool hasAmmo(const AmmoEquipment* ammo);
+    bool hasUnique(const UniqueEquipment* unique);
 };
 
 #endif//PLAYER_INFO_H

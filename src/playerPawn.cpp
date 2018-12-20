@@ -57,7 +57,7 @@ PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
     shape.setMaskFilterCategory(CollisionCategory::player_projectile);//Ignore any projectile we fire.
     setCollisionShape(shape);
 
-    shield_level = 1;
+    shield_level = 0;
     
     light_source = new LightSource(this, 0.4);
 }

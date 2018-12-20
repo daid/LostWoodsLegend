@@ -18,6 +18,10 @@ DarknessRenderPass::DarknessRenderPass()
 
 void DarknessRenderPass::render(sp::RenderQueue& queue)
 {
+    queue.add([]()
+    {
+        glClear(GL_DEPTH_BUFFER_BIT);
+    });
     if (!enabled)
         return;
 

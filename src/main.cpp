@@ -21,6 +21,7 @@
 
 #include <json11/json11.hpp>
 
+#include "playerInfo.h"
 #include "playerPawn.h"
 #include "lightSource.h"
 #include "enemies/basicEnemy.h"
@@ -42,13 +43,20 @@ class GameManager : public sp::Updatable
 public:
     GameManager(sp::P<sp::SceneGraphicsLayer> scene_layer)
     {
-        scene_layer->addRenderPass(new sp::BasicNodeRenderPass());
+        scene_render_pass = new sp::BasicNodeRenderPass();
         darkness_render_pass = new DarknessRenderPass();
+        gui_render_pass = new sp::BasicNodeRenderPass();
+        scene_layer->addRenderPass(scene_render_pass);
         scene_layer->addRenderPass(darkness_render_pass);
+        scene_layer->addRenderPass(gui_render_pass);
 #ifdef DEBUG
         scene_layer->addRenderPass(new sp::CollisionRenderPass());
 #endif
+        gui_scene = new sp::gui::Scene(sp::Vector2d(320, 240), sp::gui::Scene::Direction::Horizontal);
         scene = new MapScene("MAIN");
+        scene_render_pass->addCamera(scene->getCamera());
+        darkness_render_pass->addCamera(scene->getCamera());
+        gui_render_pass->addCamera(gui_scene->getCamera());
         gui = sp::gui::Loader::load("gui/hud.gui", "HUD");
 
         //TODO: This is hardcoded data and should be loaded from some kind of world/game file.
@@ -80,52 +88,77 @@ public:
                 }
             }
             sp::Vector2d target_position = entrance->getTargetPosition();
-            scene->unloadMap(MapScene::Transition::None);
-            player->setPosition(target_position);
-            if (map_position.x == -1)
-                scene->loadMap(map_name + ".json");
-            else
-                scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
-            darkness_render_pass->enabled = scene->getMapData()->darkness;
+            loadNextMap(MapScene::Transition::None, target_position);
         }
         else if (player->getPosition2D().x < 0 && map_position.x != -1)
         {
             map_position.x -= 1;
-            scene->unloadMap(MapScene::Transition::Left);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(scene->getMapData()->size.x, 0));
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
-            darkness_render_pass->enabled = scene->getMapData()->darkness;
+            loadNextMap(MapScene::Transition::Left, player->getPosition2D() + sp::Vector2d(scene->getMapData()->size.x, 0));
         }
         else if (player->getPosition2D().x > scene->getMapData()->size.x && map_position.x != -1)
         {
             map_position.x += 1;
-            scene->unloadMap(MapScene::Transition::Right);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(-scene->getMapData()->size.x, 0));
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
-            darkness_render_pass->enabled = scene->getMapData()->darkness;
+            loadNextMap(MapScene::Transition::Right, player->getPosition2D() + sp::Vector2d(-scene->getMapData()->size.x, 0));
         }
         else if (player->getPosition2D().y < 0 && map_position.x != -1)
         {
             map_position.y += 1;
-            scene->unloadMap(MapScene::Transition::Down);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->size.y));
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
-            darkness_render_pass->enabled = scene->getMapData()->darkness;
+            loadNextMap(MapScene::Transition::Down, player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->size.y));
         }
         else if (player->getPosition2D().y > scene->getMapData()->size.y && map_position.x != -1)
         {
             map_position.y -= 1;
-            scene->unloadMap(MapScene::Transition::Up);
-            player->setPosition(player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->size.y));
-            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
-            darkness_render_pass->enabled = scene->getMapData()->darkness;
+            loadNextMap(MapScene::Transition::Up, player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->size.y));
         }
+        updateGUI();
     }
 
 private:
+    void loadNextMap(MapScene::Transition transition, sp::Vector2d player_position)
+    {
+        scene->unloadMap(transition);
+        player->setPosition(player_position);
+        if (map_position.x == -1)
+            scene->loadMap(map_name + ".json");
+        else
+            scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
+        darkness_render_pass->enabled = scene->getMapData()->darkness;
+    }
+
+    void updateGUI()
+    {
+        for(int n=0; n<PlayerInfo::active_item_count; n++)
+        {
+            sp::P<sp::gui::Widget> w = gui->getWidgetWithID("ITEM" + sp::string(n));
+            if (!w)
+                continue;
+            sp::P<sp::gui::Widget> icon = w->getWidgetWithID("ICON");
+            sp::P<sp::gui::Widget> label = w->getWidgetWithID("LABEL");
+            if (!player_info.active_items[n].equipment)
+            {
+                icon->hide();
+                label->hide();
+            }
+            else
+            {
+                icon->show();
+                icon->setAttribute("image", player_info.active_items[n].equipment->sprite);
+                icon->setAttribute("uv", sp::string(player_info.active_items[n].equipment->sprite_uv.position.x) + "," + sp::string(player_info.active_items[n].equipment->sprite_uv.position.y) + "," + sp::string(player_info.active_items[n].equipment->sprite_uv.size.x) + "," + sp::string(player_info.active_items[n].equipment->sprite_uv.size.y));
+                if (player_info.active_items[n].ammo)
+                    label->show();
+                else
+                    label->hide();
+            }
+        }
+    }
+
+    PlayerInfo player_info;
     sp::P<MapScene> scene;
+    sp::P<sp::gui::Scene> gui_scene;
     sp::P<PlayerPawn> player;
+    sp::P<sp::BasicNodeRenderPass> scene_render_pass;
     sp::P<DarknessRenderPass> darkness_render_pass;
+    sp::P<sp::BasicNodeRenderPass> gui_render_pass;
     sp::P<sp::gui::Widget> gui;
     sp::Vector2i map_position;
     sp::string map_name;
@@ -152,7 +185,6 @@ int main(int argc, char** argv)
 #endif
 
     sp::gui::Theme::loadTheme("default", "gui/theme/basic.theme.txt");
-    new sp::gui::Scene(sp::Vector2d(320, 240), sp::gui::Scene::Direction::Horizontal);
 
     sp::P<sp::SceneGraphicsLayer> scene_layer = new sp::SceneGraphicsLayer(1);
     window->addLayer(scene_layer);
