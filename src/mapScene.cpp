@@ -153,6 +153,12 @@ void MapScene::loadMap(sp::string map_name)
                 n->setCollisionShape(shape);
             }break;
             case MapData::TileType::Water:{
+                sp::Node* n = new sp::Node(getRoot());
+                sp::collision::Simple2DShape shape(sp::Rect2d(0.5, 0.5, 1, 1));
+                shape.type = sp::collision::Shape::Type::Static;
+                shape.setFilterCategory(CollisionCategory::water);
+                n->setPosition(sp::Vector2d(x, y));
+                n->setCollisionShape(shape);
             }break;
             case MapData::TileType::Ladder:{
             }break;

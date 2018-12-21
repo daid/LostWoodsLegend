@@ -11,7 +11,8 @@ namespace CollisionCategory
     static constexpr int enemy_projectile = 5;
 
     static constexpr int walls = 8;
-    static constexpr int level_edge = 9;
+    static constexpr int water = 9;
+    static constexpr int level_edge = 10;
 };
 
 #endif//COLLISION_BITS_H
