@@ -1,9 +1,12 @@
 #include "playerPawn.h"
+#include "playerInfo.h"
 #include "enemies/enemy.h"
 #include "collisionBits.h"
 #include "lightSource.h"
 
 #include <sp2/graphics/spriteAnimation.h>
+#include <sp2/graphics/textureManager.h>
+#include <sp2/graphics/meshdata.h>
 #include <sp2/collision/simple2d/shape.h>
 
 class UseSword : public sp::Node
@@ -44,8 +47,8 @@ private:
 };
 
 
-PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
-: sp::Node(parent), controls(controls)
+PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, PlayerInfo& player_info, Controls& controls)
+: sp::Node(parent), player_info(player_info), controls(controls)
 {
     setAnimation(sp::SpriteAnimation::load("zelda1/sprites/link.txt"));
     render_data.shader = sp::Shader::get("object.shader");
@@ -64,8 +67,17 @@ PlayerPawn::PlayerPawn(sp::P<sp::Node> parent, Controls& controls)
 
 void PlayerPawn::onFixedUpdate()
 {
-    sp::Vector2d position = getPosition2D();
+    if (equipment_pickup)
+    {
+        animationPlay("PICKUP_LARGE");
+        animationSetFlags(0);
+        equipment_pickup_timeout--;
+        if (equipment_pickup_timeout < 1)
+            equipment_pickup.destroy();
+        return;
+    }
 
+    sp::Vector2d position = getPosition2D();
     sp::Vector2d move_request;
     if (active_item || hurt_delay > 0)
     {
@@ -75,7 +87,11 @@ void PlayerPawn::onFixedUpdate()
     {
         if (controls.primary_action.getDown())
         {
-            active_item = new UseSword(this, direction);
+            if (player_info.active_items[0].equipment)
+            {
+                if (player_info.active_items[0].equipment->id == "SWORD")
+                    active_item = new UseSword(this, direction);
+            }
         }
         else
         {
@@ -143,6 +159,8 @@ void PlayerPawn::onFixedUpdate()
 
 bool PlayerPawn::onTakeDamage(int amount, sp::Vector2d source)
 {
+    if (equipment_pickup)
+        return false;
     if (hurt_delay > 0 || invincibility_time > 0)
         return false;
 
@@ -150,4 +168,15 @@ bool PlayerPawn::onTakeDamage(int amount, sp::Vector2d source)
     invincibility_time = 30;
     hurt_direction = (getPosition2D() - source).normalized();
     return true;
+}
+
+void PlayerPawn::showEquipmentPickup(const Equipment* equipment)
+{
+    equipment_pickup = new sp::Node(this);
+    equipment_pickup->render_data.type = sp::RenderData::Type::Normal;
+    equipment_pickup->render_data.texture = sp::texture_manager.get(equipment->sprite);
+    equipment_pickup->render_data.mesh = sp::MeshData::createQuad(sp::Vector2f(1, 1), sp::Vector2f(equipment->sprite_uv.position), sp::Vector2f(equipment->sprite_uv.position + equipment->sprite_uv.size));
+    equipment_pickup->render_data.shader = sp::Shader::get("object.shader");
+    equipment_pickup->setPosition(sp::Vector3d(0, 1, 0.1));
+    equipment_pickup_timeout = 120;
 }

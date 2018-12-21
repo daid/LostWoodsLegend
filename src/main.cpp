@@ -65,7 +65,7 @@ public:
 
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
 
-        player = new PlayerPawn(scene->getRoot(), controls0);
+        player = new PlayerPawn(scene->getRoot(), player_info, controls0);
     }
 
     virtual void onUpdate(float delta) override

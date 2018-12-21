@@ -113,6 +113,23 @@ bool PlayerInfo::addItem(sp::string id)
     return false;
 }
 
+int PlayerInfo::addAmmo(sp::string id, int amount)
+{
+    const AmmoEquipment* ammo = findEquipment<AmmoEquipment>(id);
+    if (!ammo)
+        return 0;
+    for (auto a : this->ammo)
+    {
+        if (a.equipment == ammo)
+        {
+            int add = std::min(amount, a.capacity - a.amount);
+            a.amount += add;
+            return add;
+        }
+    }
+    return 0;
+}
+
 bool PlayerInfo::hasAmmo(const AmmoEquipment* ammo)
 {
     for (auto a : this->ammo)

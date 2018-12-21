@@ -60,6 +60,7 @@ public:
     //Add an item to this players inventory, returns true if this was successful.
     //  This will fail if this player already has this item.
     bool addItem(sp::string id);
+    int addAmmo(sp::string id, int amount);
 
     bool hasAmmo(const AmmoEquipment* ammo);
     bool hasUnique(const UniqueEquipment* unique);

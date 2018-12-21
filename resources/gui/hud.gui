@@ -18,6 +18,13 @@
 		text.alignment: topleft
 		caption: #F#H#E
 	}
+    [MONEY] {
+        alignment: top
+        size: 32, 8
+        type: label
+        text.alignment: topright
+        caption: 000
+    }
 	
 	{
 		alignment: topright

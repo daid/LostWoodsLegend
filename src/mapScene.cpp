@@ -4,6 +4,7 @@
 #include "collisionBits.h"
 #include "entrance.h"
 #include "npc.h"
+#include "equipmentPickup.h"
 #include "enemies/basicEnemy.h"
 
 #include <sp2/scene/node.h>
@@ -219,6 +220,11 @@ void MapScene::loadMap(sp::string map_name)
         {
             NPC* npc = new NPC(getRoot(), object.name, object.properties);
             npc->setPosition(object.area.center());
+        }
+        else if(object.type == "PICKUP")
+        {
+            EquipmentPickup* pickup = new EquipmentPickup(getRoot(), object.name);
+            pickup->setPosition(object.area.center());
         }
         else if(object.type == "ENTRANCE")
         {

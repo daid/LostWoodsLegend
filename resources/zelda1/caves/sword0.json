@@ -38,9 +38,9 @@
                 {
                  "height":32,
                  "id":2,
-                 "name":"sword",
+                 "name":"SWORD",
                  "rotation":0,
-                 "type":"ITEM",
+                 "type":"PICKUP",
                  "visible":true,
                  "width":32,
                  "x":112,
