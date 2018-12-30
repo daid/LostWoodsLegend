@@ -60,7 +60,7 @@ public:
         gui = sp::gui::Loader::load("gui/hud.gui", "HUD");
 
         //TODO: This is hardcoded data and should be loaded from some kind of world/game file.
-        map_position = sp::Vector2i(7, 7);
+        map_position = sp::Vector2i(7, 3);
         map_name = "zelda1/overworld";
 
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");

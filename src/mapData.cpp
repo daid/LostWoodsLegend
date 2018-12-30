@@ -19,10 +19,12 @@ MapData::MapData(sp::string name)
         if (layer["type"].string_value() == "tilelayer")
         {
             const json11::Json& tile_data_json = layer["data"];
-            tiles.resize(size.x * size.y);
+            unsigned int layer_index = sp::stringutil::convert::toInt(layer["name"].string_value());
+            tiles.resize(std::max(tiles.size(), layer_index + 1));
+            tiles[layer_index].resize(size.x * size.y);
             for (int y = 0; y < size.y; y++)
                 for (int x = 0; x < size.x; x++)
-                    tiles[x + y * size.x] = tile_data_json[x + (size.y - 1 - y) * size.x].int_value() - index_offset;
+                    tiles[layer_index][x + y * size.x] = tile_data_json[x + (size.y - 1 - y) * size.x].int_value() - index_offset;
         }
         if (layer["type"].string_value() == "objectgroup")
         {

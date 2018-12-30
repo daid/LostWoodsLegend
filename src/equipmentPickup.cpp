@@ -13,6 +13,8 @@ EquipmentPickup::EquipmentPickup(sp::P<sp::Node> parent, sp::string equipment_id
 : sp::Node(parent)
 {
     equipment = findEquipment<Equipment>(equipment_id);
+    if (!equipment)
+        return;
 
     render_data.type = sp::RenderData::Type::Normal;
     render_data.texture = sp::texture_manager.get(equipment->sprite);

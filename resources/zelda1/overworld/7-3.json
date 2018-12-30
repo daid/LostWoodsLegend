@@ -34,6 +34,23 @@
                  "width":16,
                  "x":128,
                  "y":80
+                }, 
+                {
+                 "height":16,
+                 "id":2,
+                 "name":"zelda1\/dungeon\/1\/2-5",
+                 "properties":[
+                        {
+                         "name":"exit",
+                         "type":"string",
+                         "value":"8,1.5"
+                        }],
+                 "rotation":0,
+                 "type":"ENTRANCE",
+                 "visible":true,
+                 "width":16,
+                 "x":112,
+                 "y":64
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -42,7 +59,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":2,
+ "nextobjectid":3,
  "orientation":"orthogonal",
  "renderorder":"left-up",
  "tiledversion":"1.2.1",

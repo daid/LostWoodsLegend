@@ -47,4 +47,13 @@
         name: Bombs
         capacity: 8
     }
+    
+    
+    [DUNGEON_KEY] {
+        type: collectable
+        name: Key
+        dungeon: true
+		sprite: zelda1/sprites/items.png
+		sprite_uv: 0.5, 0.5, 0.25, 0.25
+    }
 }

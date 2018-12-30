@@ -35,7 +35,7 @@ public:
 private:
     std::unique_ptr<MapData> map_data;
 
-    sp::P<sp::Tilemap> previous_tilemap;
+    sp::PList<sp::Tilemap> previous_tilemaps;
 
     static constexpr int transition_time = 15;
     Transition transition = Transition::None;

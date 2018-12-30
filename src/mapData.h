@@ -38,7 +38,7 @@ public:
 
     sp::Vector2i size;
     std::vector<TileType> tile_types;
-    std::vector<int> tiles;
+    std::vector<std::vector<int>> tiles;
     sp::Vector2i tilemap_size;
     sp::string tilemap_texture;
     

@@ -4,6 +4,7 @@
 #include <sp2/scene/node.h>
 
 class PlayerPawn;
+class Equipment;
 class Enemy : public sp::Node
 {
 public:
@@ -14,6 +15,13 @@ public:
     //This is when an enemy does absorb projectiles but accepts no damage from them.
     //If it returns false then projectiles are not absorbed and will pass trough this enemy.
     virtual bool onTakeDamage(int amount, sp::P<PlayerPawn> source) = 0;
+    
+    void setCarry(const Equipment* equipment);
+    
+    void die();
+
+private:
+    const Equipment* equipment_carry;
 };
 
 #endif//ENEMY_H

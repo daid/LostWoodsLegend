@@ -166,7 +166,7 @@ bool BasicEnemy::onTakeDamage(int amount, sp::P<PlayerPawn> source)
     if (hp <= 0)
     {
         (new SimpleEffect(getParent(), "zelda1/sprites/death.txt"))->setPosition(getPosition2D());
-        delete this;
+        die();
     }
     return true;
 }
