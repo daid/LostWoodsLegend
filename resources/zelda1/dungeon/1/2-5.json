@@ -55,12 +55,12 @@
                 {
                  "height":16,
                  "id":2,
-                 "name":"zelda1\/sprites\/door#KEY_N",
+                 "name":"zelda1\/sprites\/doors#KEY_N",
                  "properties":[
                         {
-                         "name":"opens",
+                         "name":"use_item",
                          "type":"string",
-                         "value":"DungeonKey"
+                         "value":"DUNGEON_KEY"
                         }],
                  "rotation":0,
                  "type":"DOOR",

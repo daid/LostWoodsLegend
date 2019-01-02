@@ -179,3 +179,32 @@ bool PlayerInfo::hasUnique(const UniqueEquipment* unique)
             return true;
     return false;
 }
+
+bool PlayerInfo::takeCollectable(const CollectableEquipment* collectable)
+{
+    if (collectable->dungeon_specific)
+    {
+        if (current_dungeon == "")
+            return false;
+        for(auto& c : dungeon_collectables[current_dungeon])
+        {
+            if (c.equipment == collectable && c.amount > 0)
+            {
+                c.amount -= 1;
+                return true;
+            }
+        }
+    }
+    else
+    {
+        for(auto& c : collectables)
+        {
+            if (c.equipment == collectable && c.amount > 0)
+            {
+                c.amount -= 1;
+                return true;
+            }
+        }
+    }
+    return false;
+}

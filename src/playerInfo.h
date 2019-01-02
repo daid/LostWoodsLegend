@@ -67,6 +67,8 @@ public:
 
     bool hasAmmo(const AmmoEquipment* ammo);
     bool hasUnique(const UniqueEquipment* unique);
+
+    bool takeCollectable(const CollectableEquipment* collectable);
 };
 
 #endif//PLAYER_INFO_H

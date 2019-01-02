@@ -4,6 +4,7 @@
 #include "collisionBits.h"
 #include "entrance.h"
 #include "npc.h"
+#include "door.h"
 #include "equipment.h"
 #include "equipmentPickup.h"
 #include "enemies/basicEnemy.h"
@@ -212,7 +213,7 @@ void MapScene::loadMap(sp::string map_name)
         else if(object.type == "NPC")
         {
             NPC* npc = new NPC(getRoot(), object.name, object.properties);
-            npc->setPosition(object.area.center());
+            npc->setPosition(position);
         }
         else if(object.type == "PICKUP")
         {
@@ -224,6 +225,15 @@ void MapScene::loadMap(sp::string map_name)
         else if(object.type == "ENTRANCE")
         {
             new Entrance(getRoot(), object.area, object.name, sp::stringutil::convert::toVector2d(object.properties["exit"]), object.properties["dungeon"]);
+        }
+        else if(object.type == "DOOR")
+        {
+            Door* door = new Door(getRoot(), object.name.split("#")[0], object.name.split("#")[1]);
+            door->setPosition(position);
+            if (object.properties["use_item"] != "")
+            {
+                door->setUseItem(findEquipment<CollectableEquipment>(object.properties["use_item"]));
+            }
         }
         else
         {

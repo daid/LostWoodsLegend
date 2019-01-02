@@ -1,0 +1,34 @@
+{
+	texture: zelda1/dungeon/1/tilemap.png
+	texture_size: 176, 176
+	
+	size: 1, 1
+	line_length: 11
+	frame_size: 16, 16
+	
+	[KEY_N] {
+        size: 2, 1
+        frame_size: 32, 16
+        position: 64, 0
+	}
+
+	[KEY_S] {
+        size: 2, 1
+        frame_size: 32, 16
+        position: 96, 0
+	}
+
+	[KEY_E] {
+        position: 112, 0
+	}
+	[KEY_W] {
+        position: 128, 0
+	}
+
+	[TRIGGER_E] {
+        position: 96, 0
+	}
+	[TRIGGER_W] {
+        position: 96, 0
+	}
+}
