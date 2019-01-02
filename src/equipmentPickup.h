@@ -9,8 +9,15 @@ class EquipmentPickup : public sp::Node
 public:
     EquipmentPickup(sp::P<sp::Node> parent, sp::string equipment_id);
 
+    void hideTillEnemiesKilled();
+
     virtual void onCollision(sp::CollisionInfo& info) override;
+    virtual void onFixedUpdate() override;
+
+    void show();
+    void hide();
 private:
+    bool show_on_enemies_killed = false;
     const Equipment* equipment;
 };
 

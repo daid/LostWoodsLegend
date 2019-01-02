@@ -218,6 +218,8 @@ void MapScene::loadMap(sp::string map_name)
         {
             EquipmentPickup* pickup = new EquipmentPickup(getRoot(), object.name);
             pickup->setPosition(object.area.center());
+            if (object.properties["SPAWN"] == "no enemies")
+                pickup->hideTillEnemiesKilled();
         }
         else if(object.type == "ENTRANCE")
         {

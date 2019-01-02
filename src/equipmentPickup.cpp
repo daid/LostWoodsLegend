@@ -3,7 +3,9 @@
 #include "playerPawn.h"
 #include "playerInfo.h"
 #include "collisionBits.h"
+#include "enemies/enemy.h"
 
+#include <sp2/scene/scene.h>
 #include <sp2/collision/simple2d/shape.h>
 #include <sp2/graphics/textureManager.h>
 #include <sp2/graphics/meshdata.h>
@@ -13,6 +15,17 @@ EquipmentPickup::EquipmentPickup(sp::P<sp::Node> parent, sp::string equipment_id
 : sp::Node(parent)
 {
     equipment = findEquipment<Equipment>(equipment_id);
+    show();
+}
+
+void EquipmentPickup::hideTillEnemiesKilled()
+{
+    show_on_enemies_killed = true;
+    hide();
+}
+
+void EquipmentPickup::show()
+{
     if (!equipment)
         return;
 
@@ -27,6 +40,27 @@ EquipmentPickup::EquipmentPickup(sp::P<sp::Node> parent, sp::string equipment_id
     shape.setMaskFilterCategory(CollisionCategory::enemy);
     shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
     setCollisionShape(shape);
+}
+
+void EquipmentPickup::hide()
+{
+    render_data.type = sp::RenderData::Type::None;
+    removeCollisionShape();
+}
+
+void EquipmentPickup::onFixedUpdate()
+{
+    if (show_on_enemies_killed)
+    {
+        for(sp::Node* n : getScene()->getRoot()->getChildren())
+        {
+            sp::P<Enemy> e = sp::P<sp::Node>(n);
+            if (e)
+                return;
+        }
+        show_on_enemies_killed = false;
+        show();
+    }
 }
 
 void EquipmentPickup::onCollision(sp::CollisionInfo& info)
