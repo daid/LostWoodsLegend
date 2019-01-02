@@ -2,6 +2,7 @@
 #define PLAYER_INFO_H
 
 #include "equipment.h"
+#include <unordered_map>
 
 
 /**
@@ -55,7 +56,9 @@ public:
     std::vector<const UniqueEquipment*> uniques;
     std::vector<Collectable> collectables;
 
-    //TODO: Dungeon specific items.
+    sp::string current_dungeon;
+    std::unordered_map<sp::string, std::vector<const UniqueEquipment*>> dungeon_uniques;
+    std::unordered_map<sp::string, std::vector<Collectable>> dungeon_collectables;
 
     //Add an item to this players inventory, returns true if this was successful.
     //  This will fail if this player already has this item.

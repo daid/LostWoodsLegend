@@ -23,32 +23,6 @@
 ///DropsD: {"Rupee": 2, "hp": 6, "fairy": 2}
 
 
-BasicEnemy::Template enemy_octo{
-    sprite: "zelda1/sprites/octo.txt",
-    collision_rect: sp::Rect2d(0, 0, 0.8, 0.8),
-    hp: 10,
-    hit_player_damage: 5,
-    walk_speed: 1.5,
-
-    projectile_sprite: "zelda1/sprites/octo_rock.txt",
-    projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
-    projectile_speed: 7,
-    fire_delay: 35,
-};
-BasicEnemy::Template enemy_octo_blue{
-    sprite: "zelda1/sprites/octo_blue.txt",
-    collision_rect: sp::Rect2d(0, 0, 0.8, 0.8),
-    hp: 20,
-    hit_player_damage: 5,
-    walk_speed: 1.5,
-
-    projectile_sprite: "zelda1/sprites/octo_rock.txt",
-    projectile_collision_rect: sp::Rect2d(0, 0, 0.2, 0.2),
-    projectile_speed: 7,
-    fire_delay: 35,
-};
-
-
 MapScene::MapScene(sp::string scene_name)
 : sp::Scene(scene_name)
 {
@@ -210,13 +184,13 @@ void MapScene::loadMap(sp::string map_name)
         sp::Vector2d position = object.area.center();
         if (object.type == "ENEMY")
         {
-            if (object.properties.find("position")->second == "random")
+            if (object.properties["position"] == "random")
             {
                 do {
                     position = sp::Vector2d(findRandomPosition()) + sp::Vector2d(0.5, 0.5);
                 } while(minimalPlayerDistance(position) < 3.0);
             }
-            if (object.properties.find("position")->second == "random_side")
+            if (object.properties["position"] == "random_side")
             {
                 do {
                     position = sp::Vector2d(findRandomSidePosition()) + sp::Vector2d(0.5, 0.5);
@@ -247,7 +221,7 @@ void MapScene::loadMap(sp::string map_name)
         }
         else if(object.type == "ENTRANCE")
         {
-            new Entrance(getRoot(), object.area, object.name, sp::stringutil::convert::toVector2d(object.properties["exit"]));
+            new Entrance(getRoot(), object.area, object.name, sp::stringutil::convert::toVector2d(object.properties["exit"]), object.properties["dungeon"]);
         }
         else
         {

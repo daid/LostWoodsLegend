@@ -173,10 +173,7 @@ bool PlayerPawn::onTakeDamage(int amount, sp::Vector2d source)
 void PlayerPawn::showEquipmentPickup(const Equipment* equipment)
 {
     equipment_pickup = new sp::Node(this);
-    equipment_pickup->render_data.type = sp::RenderData::Type::Normal;
-    equipment_pickup->render_data.texture = sp::texture_manager.get(equipment->sprite);
-    equipment_pickup->render_data.mesh = sp::MeshData::createQuad(sp::Vector2f(1, 1), sp::Vector2f(equipment->sprite_uv.position), sp::Vector2f(equipment->sprite_uv.position + equipment->sprite_uv.size));
-    equipment_pickup->render_data.shader = sp::Shader::get("object.shader");
+    equipment->setIcon(equipment_pickup);
     equipment_pickup->setPosition(sp::Vector3d(0, 1, 0.1));
-    equipment_pickup_timeout = 120;
+    equipment_pickup_timeout = 90;
 }

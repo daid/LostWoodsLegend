@@ -3,6 +3,7 @@
 
 #include <sp2/string.h>
 #include <sp2/math/rect.h>
+#include <sp2/scene/node.h>
 
 
 class Equipment
@@ -13,6 +14,8 @@ public:
     sp::string sprite;
     sp::Rect2d sprite_uv;
     
+    void setIcon(sp::P<sp::Node> node) const;
+
     virtual~Equipment() {}
 };
 

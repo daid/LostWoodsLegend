@@ -41,6 +41,11 @@
                  "name":"zelda1\/dungeon\/1\/2-5",
                  "properties":[
                         {
+                         "name":"dungeon",
+                         "type":"string",
+                         "value":"1"
+                        }, 
+                        {
                          "name":"exit",
                          "type":"string",
                          "value":"8,1.5"

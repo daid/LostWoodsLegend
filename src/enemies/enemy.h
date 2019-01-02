@@ -21,7 +21,7 @@ public:
     void die();
 
 private:
-    const Equipment* equipment_carry;
+    const Equipment* equipment_carry = nullptr;
 };
 
 #endif//ENEMY_H

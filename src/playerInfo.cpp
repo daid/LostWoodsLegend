@@ -84,30 +84,55 @@ bool PlayerInfo::addItem(sp::string id)
     const UniqueEquipment* unique = findEquipment<UniqueEquipment>(id);
     if (unique)
     {
-        if (unique->dungeon_specific) //TODO: Dungeon specific items not implemented yet.
-            return false;
         if (hasUnique(unique))
             return false;
-        uniques.push_back(unique);
+        if (unique->dungeon_specific)
+        {
+            if (current_dungeon == "")
+                return false;
+            dungeon_uniques[current_dungeon].push_back(unique);
+        }
+        else
+        {
+            uniques.push_back(unique);
+        }
         return true;
     }
     const CollectableEquipment* collectable = findEquipment<CollectableEquipment>(id);
     if (collectable)
     {
-        if (collectable->dungeon_specific) //TODO: Dungeon specific items not implemented yet.
-            return false;
-        for(auto& c : collectables)
+        if (collectable->dungeon_specific)
         {
-            if (c.equipment == collectable)
+            if (current_dungeon == "")
+                return false;
+            for(auto& c : dungeon_collectables[current_dungeon])
             {
-                c.amount += 1;
-                return true;
+                if (c.equipment == collectable)
+                {
+                    c.amount += 1;
+                    return true;
+                }
             }
-        }
 
-        collectables.emplace_back();
-        collectables.back().equipment = collectable;
-        collectables.back().amount = 1;
+            dungeon_collectables[current_dungeon].emplace_back();
+            dungeon_collectables[current_dungeon].back().equipment = collectable;
+            dungeon_collectables[current_dungeon].back().amount = 1;
+        }
+        else
+        {
+            for(auto& c : collectables)
+            {
+                if (c.equipment == collectable)
+                {
+                    c.amount += 1;
+                    return true;
+                }
+            }
+
+            collectables.emplace_back();
+            collectables.back().equipment = collectable;
+            collectables.back().amount = 1;
+        }
         return true;
     }
     return false;
@@ -140,6 +165,15 @@ bool PlayerInfo::hasAmmo(const AmmoEquipment* ammo)
 
 bool PlayerInfo::hasUnique(const UniqueEquipment* unique)
 {
+    if (unique->dungeon_specific)
+    {
+        if (current_dungeon == "")
+            return false;
+        for (auto u : dungeon_uniques[current_dungeon])
+            if (u == unique)
+                return true;
+        return false;
+    }
     for (auto u : uniques)
         if (u == unique)
             return true;

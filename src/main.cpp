@@ -65,6 +65,7 @@ public:
 
         scene->loadMap(map_name + "/" + sp::string(map_position.x) + "-" + sp::string(map_position.y) + ".json");
 
+        player_info.addItem("SWORD");
         player = new PlayerPawn(scene->getRoot(), player_info, controls0);
     }
 
@@ -88,6 +89,12 @@ public:
                 }
             }
             sp::Vector2d target_position = entrance->getTargetPosition();
+            if (entrance->getDungeonName() != "")
+            {
+                player_info.current_dungeon = entrance->getDungeonName();
+                if (player_info.current_dungeon == "NONE")
+                    player_info.current_dungeon = "";
+            }
             loadNextMap(MapScene::Transition::None, target_position);
         }
         else if (player->getPosition2D().x < 0 && map_position.x != -1)

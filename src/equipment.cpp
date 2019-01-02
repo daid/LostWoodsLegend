@@ -2,6 +2,9 @@
 #include <sp2/io/keyValueTreeLoader.h>
 #include <sp2/stringutil/convert.h>
 
+#include <sp2/graphics/textureManager.h>
+#include <sp2/graphics/meshdata.h>
+
 
 static std::map<sp::string, Equipment*> equipment_map;
 
@@ -78,4 +81,12 @@ template<> const Equipment* findEquipment<Equipment>(sp::string id)
     if (it == equipment_map.end())
         return nullptr;
     return it->second;
+}
+
+void Equipment::setIcon(sp::P<sp::Node> node) const
+{
+    node->render_data.type = sp::RenderData::Type::Normal;
+    node->render_data.texture = sp::texture_manager.get(sprite);
+    node->render_data.mesh = sp::MeshData::createQuad(sp::Vector2f(1, 1), sp::Vector2f(sprite_uv.position), sp::Vector2f(sprite_uv.position + sprite_uv.size));
+    node->render_data.shader = sp::Shader::get("object.shader");
 }

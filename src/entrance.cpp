@@ -5,8 +5,8 @@
 #include <sp2/collision/simple2d/shape.h>
 
 
-Entrance::Entrance(sp::P<sp::Node> parent, sp::Rect2d area, sp::string target, sp::Vector2d target_position)
-: sp::Node(parent), target(target), target_position(target_position)
+Entrance::Entrance(sp::P<sp::Node> parent, sp::Rect2d area, sp::string target, sp::Vector2d target_position, sp::string dungeon)
+: sp::Node(parent), target(target), target_position(target_position), dungeon(dungeon)
 {
     setPosition(area.position + area.size * 0.5);
 

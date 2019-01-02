@@ -36,6 +36,11 @@
                  "name":"zelda1\/overworld\/7-3",
                  "properties":[
                         {
+                         "name":"dungeon",
+                         "type":"string",
+                         "value":"NONE"
+                        }, 
+                        {
                          "name":"exit",
                          "type":"string",
                          "value":"7.5,5"
