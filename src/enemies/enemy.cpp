@@ -30,6 +30,9 @@ void Enemy::setCarry(const Equipment* equipment)
 void Enemy::die()
 {
     if (equipment_carry)
-        new EquipmentPickup(getParent(), equipment_carry->id);
+    {
+        EquipmentPickup* ep = new EquipmentPickup(getParent(), equipment_carry->id);
+        ep->setPosition(getPosition2D());
+    }
     delete this;
 }
