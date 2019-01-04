@@ -7,7 +7,7 @@ class CollectableEquipment;
 class Door : public sp::Node
 {
 public:
-    Door(sp::P<sp::Node> parent, sp::string sprite_name, sp::string animation_name);
+    Door(sp::P<sp::Node> parent, sp::Vector2d position, sp::string sprite_name, sp::string animation_name);
 
     void setUseItem(const CollectableEquipment* equipment);
 

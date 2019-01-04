@@ -12,6 +12,17 @@ MapData::MapData(sp::string name)
 
     size.x = map_json["width"].int_value();
     size.y = map_json["height"].int_value();
+    play_area.size = sp::Vector2d(size);
+
+    for(const auto& property : map_json["properties"].array_items())
+    {
+        if (property["name"].string_value() == "play_area_margin")
+        {
+            float padding = sp::stringutil::convert::toFloat(property["value"].string_value());
+            play_area.position += sp::Vector2d(padding, padding);
+            play_area.size -= sp::Vector2d(padding * 2, padding * 2);
+        }
+    }
     int index_offset = map_json["tilesets"][0]["firstgid"].int_value();
 
     for(const auto& layer : map_json["layers"].array_items())

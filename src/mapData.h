@@ -37,6 +37,7 @@ public:
     MapData(sp::string name);
 
     sp::Vector2i size;
+    sp::Rect2d play_area;
     std::vector<TileType> tile_types;
     std::vector<std::vector<int>> tiles;
     sp::Vector2i tilemap_size;
