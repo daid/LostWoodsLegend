@@ -158,20 +158,20 @@ void MapScene::loadMap(sp::string map_name)
         shape.setFilterCategory(CollisionCategory::level_edge);
 
         sp::Node* n = new sp::Node(getRoot());
-        n->setPosition(sp::Vector2d(0, -0.5));
+        n->setPosition(sp::Vector2d(0, map_data->play_area.position.x-0.5));
         n->setCollisionShape(shape);
 
         n = new sp::Node(getRoot());
-        n->setPosition(sp::Vector2d(0, map_data->size.y + 0.5));
+        n->setPosition(sp::Vector2d(0, map_data->play_area.position.y + map_data->play_area.size.y + 0.5));
         n->setCollisionShape(shape);
 
         shape.rect = sp::Rect2d(0, map_data->size.y / 2, 1, map_data->size.y);
         n = new sp::Node(getRoot());
-        n->setPosition(sp::Vector2d(-0.5, 0));
+        n->setPosition(sp::Vector2d(map_data->play_area.position.x-0.5, 0));
         n->setCollisionShape(shape);
 
         n = new sp::Node(getRoot());
-        n->setPosition(sp::Vector2d(map_data->size.x + 0.5, 0));
+        n->setPosition(sp::Vector2d(map_data->play_area.position.x + map_data->play_area.size.x + 0.5, 0));
         n->setCollisionShape(shape);
     }
 
@@ -228,8 +228,7 @@ void MapScene::loadMap(sp::string map_name)
         }
         else if(object.type == "DOOR")
         {
-            Door* door = new Door(getRoot(), object.name.split("#")[0], object.name.split("#")[1]);
-            door->setPosition(position);
+            Door* door = new Door(getRoot(), position, object.name.split("#")[0], object.name.split("#")[1]);
             if (object.properties["use_item"] != "")
             {
                 door->setUseItem(findEquipment<CollectableEquipment>(object.properties["use_item"]));

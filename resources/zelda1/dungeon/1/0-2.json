@@ -86,6 +86,11 @@
  "orientation":"orthogonal",
  "properties":[
         {
+         "name":"play_area_margin",
+         "type":"string",
+         "value":"1"
+        },
+        {
          "name":"darkness",
          "type":"string",
          "value":"1"

@@ -84,6 +84,12 @@
  "nextlayerid":4,
  "nextobjectid":4,
  "orientation":"orthogonal",
+ "properties":[
+        {
+         "name":"play_area_margin",
+         "type":"string",
+         "value":"1"
+        }],
  "renderorder":"left-up",
  "tiledversion":"1.2.1",
  "tileheight":16,

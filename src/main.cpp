@@ -2,6 +2,7 @@
 #include <sp2/window.h>
 #include <sp2/logging.h>
 #include <sp2/io/directoryResourceProvider.h>
+#include <sp2/io/zipResourceProvider.h>
 #include <sp2/graphics/gui/scene.h>
 #include <sp2/graphics/gui/theme.h>
 #include <sp2/graphics/gui/loader.h>
@@ -97,25 +98,25 @@ public:
             }
             loadNextMap(MapScene::Transition::None, target_position);
         }
-        else if (player->getPosition2D().x < 0 && map_position.x != -1)
+        else if (player->getPosition2D().x < scene->getMapData()->play_area.position.x && map_position.x != -1)
         {
             map_position.x -= 1;
-            loadNextMap(MapScene::Transition::Left, player->getPosition2D() + sp::Vector2d(scene->getMapData()->size.x, 0));
+            loadNextMap(MapScene::Transition::Left, player->getPosition2D() + sp::Vector2d(scene->getMapData()->play_area.size.x, 0));
         }
-        else if (player->getPosition2D().x > scene->getMapData()->size.x && map_position.x != -1)
+        else if (player->getPosition2D().x > scene->getMapData()->play_area.position.x + scene->getMapData()->play_area.size.x && map_position.x != -1)
         {
             map_position.x += 1;
-            loadNextMap(MapScene::Transition::Right, player->getPosition2D() + sp::Vector2d(-scene->getMapData()->size.x, 0));
+            loadNextMap(MapScene::Transition::Right, player->getPosition2D() + sp::Vector2d(-scene->getMapData()->play_area.size.x, 0));
         }
-        else if (player->getPosition2D().y < 0 && map_position.x != -1)
+        else if (player->getPosition2D().y < scene->getMapData()->play_area.position.y && map_position.x != -1)
         {
             map_position.y += 1;
-            loadNextMap(MapScene::Transition::Down, player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->size.y));
+            loadNextMap(MapScene::Transition::Down, player->getPosition2D() + sp::Vector2d(0, scene->getMapData()->play_area.size.y));
         }
-        else if (player->getPosition2D().y > scene->getMapData()->size.y && map_position.x != -1)
+        else if (player->getPosition2D().y > scene->getMapData()->play_area.position.y + scene->getMapData()->play_area.size.y && map_position.x != -1)
         {
             map_position.y -= 1;
-            loadNextMap(MapScene::Transition::Up, player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->size.y));
+            loadNextMap(MapScene::Transition::Up, player->getPosition2D() + sp::Vector2d(0, -scene->getMapData()->play_area.size.y));
         }
         updateGUI();
     }
@@ -177,7 +178,7 @@ int main(int argc, char** argv)
 
     //Create resource providers, so we can load things.
     new sp::io::DirectoryResourceProvider("resources");
-
+    
     //Disable or enable smooth filtering by default, enabling it gives nice smooth looks, but disabling it gives a more pixel art look.
     sp::texture_manager.setDefaultSmoothFiltering(false);
     
