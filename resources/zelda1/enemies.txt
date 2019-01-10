@@ -42,6 +42,7 @@
 		hit_player_damage: 16
 		walk_speed: 1.5
 
+        #TODO: This should fire swords that can only be blocked with a lvl2 shield.
 		projectile_sprite: zelda1/sprites/arrow.txt
 		projectile_collision: 0.4, 0.4,
 		projectile_speed: 7
@@ -63,11 +64,20 @@
     
     [Keese] {
         sprite: zelda1/sprites/keese.txt
-		collision: 0.8, 0.8
+		collision: 0.8, 0.6
 		hp: 0
 		hit_player_damage: 8
-		walk_speed: 1.5
+		walk_speed: 2.0
         walk_trough_walls: true
         movement: walk8dir
+    }
+
+    [Gel] {
+        sprite: zelda1/sprites/gel.txt
+		collision: 0.4, 0.4
+		hp: 0
+		hit_player_damage: 8
+		walk_speed: 1.0
+        movement: walk4dir
     }
 }

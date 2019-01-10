@@ -10,7 +10,7 @@
 
 
 Door::Door(sp::P<sp::Node> parent, sp::Vector2d position, sp::string sprite_name, sp::string animation_name)
-: sp::Node(parent)
+: Triggerable(parent)
 {
     setPosition(position);
     setAnimation(sp::SpriteAnimation::load(sprite_name + ".txt"));
@@ -71,4 +71,9 @@ void Door::onCollision(sp::CollisionInfo& info)
             }
         }
     }
+}
+
+void Door::onTrigger()
+{
+    delete this;
 }

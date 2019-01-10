@@ -153,11 +153,28 @@
                  "height":16,
                  "id":8,
                  "name":"zelda1\/sprites\/doors#TRIGGER_E",
+                 "properties":[
+                        {
+                         "name":"trigger",
+                         "type":"string",
+                         "value":"door_trigger"
+                        }],
                  "rotation":0,
                  "type":"DOOR",
                  "visible":true,
                  "width":16,
                  "x":224,
+                 "y":80
+                }, 
+                {
+                 "height":16,
+                 "id":9,
+                 "name":"door_trigger",
+                 "rotation":0,
+                 "type":"TRIGGER_ALL_DEAD",
+                 "visible":true,
+                 "width":16,
+                 "x":144,
                  "y":80
                 }],
          "opacity":1,
@@ -167,7 +184,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":9,
+ "nextobjectid":10,
  "orientation":"orthogonal",
  "properties":[
         {

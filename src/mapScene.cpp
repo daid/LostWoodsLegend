@@ -230,9 +230,13 @@ void MapScene::loadMap(sp::string map_name)
         {
             Door* door = new Door(getRoot(), position, object.name.split("#")[0], object.name.split("#")[1]);
             if (object.properties["use_item"] != "")
-            {
                 door->setUseItem(findEquipment<CollectableEquipment>(object.properties["use_item"]));
-            }
+            if (object.properties["trigger"] != "")
+                door->setTriggerName(object.properties["trigger"]);
+        }
+        else if(object.type == "TRIGGER_ALL_DEAD")
+        {
+            new TriggerAllEnemiesDead(getRoot(), object.name);
         }
         else
         {

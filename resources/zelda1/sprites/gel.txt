@@ -1,0 +1,21 @@
+{
+	texture: zelda1/sprites/dungeon_enemies.png
+	texture_size: 128, 128
+	
+	size: 1, 1
+	line_length: 8
+	loop: True
+	frame_size: 16, 16
+	delay: 0.08
+	position: 0, 48
+	
+	frames: 0, 1
+	[DOWN] {
+	}
+	[RIGHT] {
+	}
+    [LEFT] {
+    }
+	[UP] {
+	}
+}

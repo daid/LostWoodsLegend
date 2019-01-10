@@ -12,7 +12,7 @@
 
 
 EquipmentPickup::EquipmentPickup(sp::P<sp::Node> parent, sp::string equipment_id)
-: sp::Node(parent)
+: Triggerable(parent)
 {
     equipment = findEquipment<Equipment>(equipment_id);
     show();
@@ -74,4 +74,9 @@ void EquipmentPickup::onCollision(sp::CollisionInfo& info)
             delete this;
         }
     }
+}
+
+void EquipmentPickup::onTrigger()
+{
+    show();
 }
