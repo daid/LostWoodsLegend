@@ -6,7 +6,7 @@
 	line_length: 8
 	loop: True
 	frame_size: 16, 16
-	delay: 0.15
+	delay: 0.08
 	position: 0, 0
 	
 	frames: 0, 1
@@ -14,6 +14,8 @@
 	}
 	[RIGHT] {
 	}
+    [LEFT] {
+    }
 	[UP] {
 	}
 }

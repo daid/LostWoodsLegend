@@ -39,7 +39,7 @@ public:
     {
         sp::P<Enemy> enemy = info.other;
         if (enemy)
-            enemy->onTakeDamage(10, source);
+            enemy->onTakeDamage(16, source);
     }
 private:
     sp::P<PlayerPawn> source;

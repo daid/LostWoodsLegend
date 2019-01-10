@@ -13,6 +13,9 @@
 	}
 	[RIGHT] {
 		frames: 2, 3
+        [LEFT] {
+            flip: H
+        }
 	}
 	[UP] {
 		frames: 4, 5

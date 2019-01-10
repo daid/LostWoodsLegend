@@ -4,6 +4,10 @@
 #include "enemy.h"
 #include "../direction.h"
 
+#include <sp2/script/environment.h>
+#include <sp2/script/coroutine.h>
+
+
 /* BasicEnemy
     This Enemy randomly wanders the map, and optionally fires projectiles.
     Quite a few enemies follow this basic pattern and thus can be made with this class:
@@ -25,14 +29,11 @@ public:
     public:
         sp::string sprite;
         sp::Rect2d collision_rect;
+        bool wall_collision;
         int hp;
         int hit_player_damage;
-        double walk_speed;
 
-        sp::string projectile_sprite;
-        sp::Rect2d projectile_collision_rect;
-        double projectile_speed;
-        int fire_delay;
+        std::map<sp::string, sp::string> properties;
     };
 
     BasicEnemy(sp::P<sp::Node> parent, const Template& enemy_template);
@@ -41,20 +42,18 @@ public:
 
     virtual bool onTakeDamage(int amount, sp::P<PlayerPawn> source) override;
     virtual void onCollision(sp::CollisionInfo& info) override;
+
+    virtual void onRegisterScriptBindings(sp::ScriptBindingClass& bindings) override;
+
+    void setPosition2D(sp::Vector2d position);
+    void playAnimation(sp::string animation);
+    void createProjectile(sp::Vector2d velocity, sp::string sprite_name);
 private:
-    enum class State
-    {
-        Walk,
-        Attack
-    };
+    sp::P<sp::script::Environment> script_environment;
+    sp::script::CoroutinePtr update_coroutine;
 
     int hp;
     int hurt_counter;
-
-    State state;
-    int state_delay;
-    Direction walk_direction;
-    int walk_distance;
 
     const Template& enemy_template;
 

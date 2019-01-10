@@ -2,8 +2,8 @@
 	[OctoRed] {
 		sprite: zelda1/sprites/octo.txt
 		collision: 0.8, 0.8
-		hp: 10
-		hit_player_damage: 5
+		hp: 16
+		hit_player_damage: 8
 		walk_speed: 1.5
 
 		projectile_sprite: zelda1/sprites/octo_rock.txt
@@ -13,15 +13,15 @@
 		
 		[OctoBlue] {
 			sprite: zelda1/sprites/octo_blue.txt
-			hp: 20
+			hp: 32
 		}
 	}
 	
 	[Moblin] {
 		sprite: zelda1/sprites/moblin.txt
 		collision: 0.8, 0.8
-		hp: 20
-		hit_player_damage: 5
+		hp: 32
+		hit_player_damage: 8
 		walk_speed: 1.5
 
 		projectile_sprite: zelda1/sprites/arrow.txt
@@ -31,7 +31,7 @@
 		
 		[MoblinBlack] {
 			sprite: zelda1/sprites/moblin_black.txt
-			hp: 30
+			hp: 48
 		}
 	}
 
@@ -39,7 +39,7 @@
 		sprite: zelda1/sprites/lynel.txt
 		collision: 0.8, 0.8
 		hp: 40
-		hit_player_damage: 10
+		hit_player_damage: 16
 		walk_speed: 1.5
 
 		projectile_sprite: zelda1/sprites/arrow.txt
@@ -56,8 +56,18 @@
 	[Stalfos] {
 		sprite: zelda1/sprites/stalfos.txt
 		collision: 0.8, 0.8
-		hp: 20
-		hit_player_damage: 10
+		hp: 32
+		hit_player_damage: 16
 		walk_speed: 1.5
 	}
+    
+    [Keese] {
+        sprite: zelda1/sprites/keese.txt
+		collision: 0.8, 0.8
+		hp: 0
+		hit_player_damage: 8
+		walk_speed: 1.5
+        walk_trough_walls: true
+        movement: walk8dir
+    }
 }

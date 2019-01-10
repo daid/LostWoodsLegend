@@ -7,27 +7,34 @@
 #include <sp2/graphics/spriteAnimation.h>
 #include <sp2/io/keyValueTreeLoader.h>
 
+
 std::map<sp::string, BasicEnemy::Template> BasicEnemy::templates;
 
+static int luaF_yield(lua_State* L)
+{
+    return lua_yield(L, 0);
+}
 
 class BasicEnemyProjectile : public sp::Node
 {
 public:
-    BasicEnemyProjectile(sp::P<Enemy> owner, Direction direction, const BasicEnemy::Template& enemy_template)
-    : sp::Node(owner->getParent()), direction(direction), enemy_template(enemy_template)
+    BasicEnemyProjectile(sp::P<Enemy> owner, sp::string animation, sp::Vector2d velocity)
+    : sp::Node(owner->getParent()), velocity(velocity)
     {
-        setPosition(owner->getPosition2D() + direction.toVector() * 0.5);
-        setAnimation(sp::SpriteAnimation::load(enemy_template.projectile_sprite));
+        setPosition(owner->getPosition2D() + velocity.normalized() * 0.5);
+        setAnimation(sp::SpriteAnimation::load(animation));
         render_data.shader = sp::Shader::get("object.shader");
-        switch(direction)
-        {
-        case Direction::Up: animationPlay("UP"); break;
-        case Direction::Down: animationPlay("DOWN"); break;
-        case Direction::Left: animationPlay("LEFT"); break;
-        case Direction::Right: animationPlay("RIGHT"); break;
-        }
+        
+        if (velocity.x < 0)
+            animationPlay("LEFT");
+        else if (velocity.x > 0)
+            animationPlay("RIGHT");
+        else if (velocity.y > 0)
+            animationPlay("UP");
+        else
+            animationPlay("DOWN");
 
-        sp::collision::Simple2DShape shape(enemy_template.projectile_collision_rect);
+        sp::collision::Simple2DShape shape(sp::Rect2d(0, 0, 0.3, 0.3));
         shape.type = sp::collision::Shape::Type::Sensor;
         shape.setFilterCategory(CollisionCategory::enemy_projectile);
         shape.setMaskFilterCategory(CollisionCategory::enemy);
@@ -39,7 +46,7 @@ public:
 
     virtual void onFixedUpdate() override
     {
-        setPosition(getPosition2D() + direction.toVector() * enemy_template.projectile_speed / 60.0);
+        setPosition(getPosition2D() + velocity);
         if (timeout)
             timeout--;
         else
@@ -54,15 +61,14 @@ public:
             return;
         }
         sp::P<PlayerPawn> player = info.other;
-        if (player && player->onTakeDamage(5, this->getPosition2D()))
+        if (player && player->onTakeDamage(8, this->getPosition2D()))
         {
             delete this;
             return;
         }
     }
 private:
-    Direction direction;
-    const BasicEnemy::Template& enemy_template;
+    sp::Vector2d velocity;
     int timeout;
 };
 
@@ -79,50 +85,30 @@ BasicEnemy::BasicEnemy(sp::P<sp::Node> parent, const Template& enemy_template)
     shape.setFilterCategory(CollisionCategory::enemy);
     shape.setMaskFilterCategory(CollisionCategory::enemy);
     shape.setMaskFilterCategory(CollisionCategory::enemy_projectile);
+    if (!enemy_template.wall_collision)
+        shape.setMaskFilterCategory(CollisionCategory::walls);
     setCollisionShape(shape);
 
     hp = enemy_template.hp;
-    state = State::Walk;
-    state_delay = sp::irandom(50, 100);
-    walk_direction = Direction::random();
     hurt_counter = 0;
+
+    script_environment = new sp::script::Environment();
+    script_environment->setGlobal("this", sp::P<BasicEnemy>(this));
+    script_environment->setGlobal("yield", luaF_yield);
+    script_environment->setGlobal("random", sp::random);
+    script_environment->setGlobal("irandom", sp::irandom);
+    for (auto& it : enemy_template.properties)
+        script_environment->setGlobal(it.first, it.second);
+    script_environment->load("script/basic_enemy.lua");
 }
 
 void BasicEnemy::onFixedUpdate()
 {
-    if (state_delay > 0)
-        state_delay--;
-    else
-        state_delay = 0;
+    if (!update_coroutine || !update_coroutine->resume())
+        update_coroutine = script_environment->callCoroutine("update");
+    script_environment->call("updateAnimation");
+    script_environment->setGlobal("touch_wall", false);
 
-    switch(state)
-    {
-    case State::Walk:
-        setPosition(getPosition2D() + walk_direction.toVector() * enemy_template.walk_speed / 60.0);
-        if (!state_delay)
-        {
-            if (enemy_template.projectile_speed > 0 && sp::random(0, 100) < 50)
-            {
-                new BasicEnemyProjectile(this, walk_direction, enemy_template);
-                state = State::Attack;
-                state_delay = enemy_template.fire_delay;
-            }
-            else
-            {
-                walk_direction = Direction::random();
-                state_delay = sp::irandom(50, 100);
-            }
-        }
-        break;
-    case State::Attack:
-        if (!state_delay)
-        {
-            walk_direction = Direction::random();
-            state = State::Walk;
-            state_delay = sp::irandom(50, 100);
-        }
-        break;
-    }
     if (hurt_counter > 0)
     {
         hurt_counter--;
@@ -133,26 +119,6 @@ void BasicEnemy::onFixedUpdate()
         case 2: render_data.color = sp::Color(1, 0, 1); break;
         case 3: render_data.color = sp::Color(0, 1, 1); break;
         }
-    }
-
-    switch(walk_direction)
-    {
-    case Direction::Left:
-        animationPlay("RIGHT");
-        animationSetFlags(sp::SpriteAnimation::FlipFlag);
-        break;
-    case Direction::Right:
-        animationPlay("RIGHT");
-        animationSetFlags(0);
-        break;
-    case Direction::Up:
-        animationPlay("UP");
-        animationSetFlags(0);
-        break;
-    case Direction::Down:
-        animationPlay("DOWN");
-        animationSetFlags(0);
-        break;
     }
 }
 
@@ -173,8 +139,8 @@ bool BasicEnemy::onTakeDamage(int amount, sp::P<PlayerPawn> source)
 
 void BasicEnemy::onCollision(sp::CollisionInfo& info)
 {
-    if (info.other->isSolid() && state == State::Walk)
-        state_delay -= 10;
+    if (info.other->isSolid())
+        script_environment->setGlobal("touch_wall", true);
 
     sp::P<PlayerPawn> player = info.other;
     if (player)
@@ -190,12 +156,32 @@ void BasicEnemy::loadEnemyTemplates()
         t.collision_rect.size = sp::stringutil::convert::toVector2d(entry.second["collision"]);
         t.hp = sp::stringutil::convert::toInt(entry.second["hp"]);
         t.hit_player_damage = sp::stringutil::convert::toInt(entry.second["hit_player_damage"]);
-        t.walk_speed = sp::stringutil::convert::toFloat(entry.second["walk_speed"]);
+        t.wall_collision = !sp::stringutil::convert::toBool(entry.second["walk_trough_walls"]);;
 
-        t.projectile_sprite = entry.second["projectile_sprite"];
-        t.projectile_collision_rect.size = sp::stringutil::convert::toVector2d(entry.second["projectile_collision"]);
-        t.projectile_speed = sp::stringutil::convert::toFloat(entry.second["projectile_speed"]);
-        t.fire_delay = sp::stringutil::convert::toInt(entry.second["fire_delay"]);
+        t.properties = entry.second;
         templates[entry.first] = t;
     }
+}
+
+void BasicEnemy::onRegisterScriptBindings(sp::ScriptBindingClass& bindings)
+{
+    bindings.bind("setPosition", &BasicEnemy::setPosition2D);
+    bindings.bind("getPosition", &sp::Node::getPosition2D);
+    bindings.bind("animation", &BasicEnemy::playAnimation);
+    bindings.bind("createProjectile", &BasicEnemy::createProjectile);
+}
+
+void BasicEnemy::setPosition2D(sp::Vector2d position)
+{
+    setPosition(position);
+}
+
+void BasicEnemy::playAnimation(sp::string animation)
+{
+    animationPlay(animation);
+}
+
+void BasicEnemy::createProjectile(sp::Vector2d velocity, sp::string sprite_name)
+{
+    new BasicEnemyProjectile(this, sprite_name, velocity);
 }

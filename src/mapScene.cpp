@@ -189,13 +189,13 @@ void MapScene::loadMap(sp::string map_name)
             {
                 do {
                     position = sp::Vector2d(findRandomPosition()) + sp::Vector2d(0.5, 0.5);
-                } while(minimalPlayerDistance(position) < 3.0);
+                } while(minimalPlayerDistance(position) < 4.0);
             }
             if (object.properties["position"] == "random_side")
             {
                 do {
                     position = sp::Vector2d(findRandomSidePosition()) + sp::Vector2d(0.5, 0.5);
-                } while(minimalPlayerDistance(position) < 3.0);
+                } while(minimalPlayerDistance(position) < 4.0);
             }
             auto t = BasicEnemy::templates.find(object.name);
             sp::P<Enemy> enemy;
