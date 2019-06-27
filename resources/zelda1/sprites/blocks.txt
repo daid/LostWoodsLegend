@@ -1,0 +1,12 @@
+{
+	texture: zelda1/dungeon/1/tilemap.png
+	texture_size: 176, 176
+	
+	size: 1, 1
+	line_length: 11
+	frame_size: 16, 16
+	
+	[PUSH] {
+        position: 32, 16
+	}
+}

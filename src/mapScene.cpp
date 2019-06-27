@@ -6,13 +6,13 @@
 #include "npc.h"
 #include "door.h"
 #include "equipment.h"
+#include "pushBlock.h"
 #include "equipmentPickup.h"
 #include "enemies/basicEnemy.h"
 
 #include <sp2/scene/node.h>
 #include <sp2/scene/camera.h>
 #include <sp2/scene/tilemap.h>
-#include <sp2/collision/simple2d/shape.h>
 #include <sp2/tween.h>
 
 #include <sp2/graphics/spriteAnimation.h>
@@ -233,6 +233,10 @@ void MapScene::loadMap(sp::string map_name)
                 door->setUseItem(findEquipment<CollectableEquipment>(object.properties["use_item"]));
             if (object.properties["trigger"] != "")
                 door->setTriggerName(object.properties["trigger"]);
+        }
+        else if(object.type == "PUSH_BLOCK")
+        {
+            PushBlock* push_block = new PushBlock(getRoot(), position, object.name.split("#")[0], object.name.split("#")[1]);
         }
         else if(object.type == "TRIGGER_ALL_DEAD")
         {

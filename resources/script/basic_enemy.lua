@@ -1,4 +1,15 @@
 
+--[[
+    This Enemy randomly wanders the map, and optionally fires projectiles.
+    Quite a few enemies follow this basic pattern and thus can be made with this class:
+    * Armos (no projectiles, only after activation)
+    * Ghini? (no projectiles, TODO: need to check behaviour really matches BasicEnemy, moves diagonaly)
+    * Lynel
+    * Moblin
+    * Octorok
+    * Darknut (no projectiles, TODO: cannot be hit from front)
+    * Stalfos (no projectiles)
+--]]
 function walk4dir()
     if irandom(0, 100) < 50 then
         if irandom(0, 100) < 50 then
@@ -26,6 +37,10 @@ function walk4dir()
     end
 end
 
+--[[
+    Move randomly in 8 different directions.
+    * Gibdo
+--]]
 function walk8dir()
     if walk_direction == nil then walk_direction = Vector2(1, 0) end
     if irandom(0, 100) < 50 then
